@@ -20,7 +20,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 export default class FooterTabs extends React.Component {
     componentWillMount() {
         //   console.disableYellowBox = true
-        console.log(this.props.navigate, "this_props")
+        // console.log(this.props.navigate, "this_props")
     }
     render() {
         let navigation = this.props.navigate

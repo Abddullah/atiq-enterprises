@@ -1,17 +1,11 @@
 import React, { Component } from 'react'
 import {
-    Image,
-    Dimensions, Keyboard,
-    StyleSheet,
-    Text,
-    SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder,
-    TouchableOpacity,
-    ScrollView
+    Image, Dimensions, Keyboard, StyleSheet, Text, SafeAreaView, Item, Icon, Button, Input, TextInput,
+    View, PanResponder, TouchableOpacity, ScrollView
 } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { setDataReducer } from "../../store/action/action";
+import { setDataReducer } from "../../Store/Action/action";
 
 import FootersTabs from '../../component/footer'
 import AppContainer from '../../component/AppContainer'
@@ -24,10 +18,9 @@ import AddExpenseSchema from '../../realm/Schema'
 const Realm = require('realm');
 
 // import { connectRealm } from 'react-native-realm';
-
-
 // const screenWidth = Dimensions.get('screen').width
 // const screenHeight = Dimensions.get('screen').height
+
 export default class AddExpense extends React.Component {
     constructor() {
         super()
@@ -50,13 +43,10 @@ export default class AddExpense extends React.Component {
     }
 
     componentDidMount() {
-
-
         Realm.open({ schema: [AddExpenseSchema] })
             .then(realm => {
                 realm.write(() => {
                     // realm.create('AddExpense', {
-
                     //     date: '22-07-2020',
                     //     expense: 'expense',
                     //     amount: '1200',
@@ -91,6 +81,93 @@ export default class AddExpense extends React.Component {
             .then(res => res)
             .catch(err => err)
     }
+
+
+    save() {
+        //ADD__DATA
+        // Realm.open({ schema: [AddExpenseSchema] })
+        //     .then(realm => {
+        //         realm.write(() => {
+        //             realm.create('Testing', {
+        //                 id: 3,
+        //                 date: '22-07-2020',
+        //                 expense: 'expense2',
+        //                 amount: '1200',
+        //             });
+        //             const addExpenseData = realm.objects('Testing')
+        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
+        //             console.log(myJSON, 'addExpenseData')
+        //         });
+        //         realm.close();
+        //     })
+        //     .catch(error => {
+        //         console.log(error, 'error');
+        //     });
+
+        // EDIT******************
+        // Realm.open({ schema: [AddExpenseSchema,] })
+        //     .then(realm => {
+        //         realm.write(() => {
+        //             realm.create('Testing', { id: 2, amount: '2000' }, 'modified')
+
+
+        //             const addExpenseData = realm.objects('Testing')
+        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
+        //             console.log(myJSON, 'addExpenseData')
+
+        //         })
+
+        //     })
+
+        // delete
+        // Realm.open({ schema: [AddExpenseSchema,] })
+        //     .then(realm => {
+        //         realm.write(() => {
+
+        //             // ALL_OBJECTS_DELETE
+        //             // const deleteObject = realm.objects('Testing');
+        //             // realm.delete(deleteObject);
+
+        //             // ONE_OBJECT_DELETE BY ID
+        //             const deleteById = realm.objectForPrimaryKey('Testing', 2);
+        //             realm.delete(deleteById);
+
+
+        //             const addExpenseData = realm.objects('Testing')
+        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
+        //             console.log(myJSON, 'addExpenseData')
+
+        //         })
+
+        //     })
+
+
+        // read file
+        // Realm.open({ schema: [AddExpenseSchema] })
+        //     .then(realm => {
+        //         realm.write(() => {
+
+        //             // ALL_OBJECTS_GET
+
+        //             const get = realm.objects('Testing')
+        //             let getAllObjects = JSON.parse(JSON.stringify(get))
+        //             console.log(getAllObjects, 'getAllObjects')
+
+        //             // ONE_OBJECT_GET BY ID
+
+        //             const get = realm.objectForPrimaryKey('Testing', 2);
+        //             // let getObjectByID = JSON.parse(JSON.stringify(get))
+        //             // console.log(getObjectByID, 'getObjectByID')
+
+        //         });
+        //         realm.close();
+        //     })
+        //     .catch(error => {
+        //         console.log(error, 'error');
+        //     })
+    }
+
+
 
     ///////////////////REALM////////////////////////
 
@@ -203,9 +280,9 @@ export default class AddExpense extends React.Component {
 
     }
 
-    save() {
+    // save() {
 
-    }
+    // }
 
     render() {
         // <PeopleList people={this.props.people} />
@@ -261,7 +338,7 @@ export default class AddExpense extends React.Component {
                                                 value={this.state.amount}
                                             />
                                         </View>
-                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.delete()}>
+                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.save()}>
                                             <Text style={styles.saveBtnText}>Save</Text>
                                         </TouchableOpacity>
                                     </View>

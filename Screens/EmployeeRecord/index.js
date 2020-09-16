@@ -14,8 +14,6 @@ import Employee from '../../component/employee'
 import AppContainer from '../../component/AppContainer'
 import { DatePicker } from 'native-base'
 
-
-
 // const screenWidth = Dimensions.get('screen').width
 // const screenHeight = Dimensions.get('screen').height
 export default class EmployeeRecord extends React.Component {
@@ -25,7 +23,6 @@ export default class EmployeeRecord extends React.Component {
     }
 
     render() {
-
         var { height, width } = Dimensions.get('window');
         return (
             <View style={{ flex: 1 }}>

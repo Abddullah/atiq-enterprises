@@ -1,27 +1,16 @@
 import React, { Component } from 'react'
 import {
-    Image,
-    Dimensions, Keyboard,
-    StyleSheet,
-    Text,
-    SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder,
-    TouchableOpacity,
-    ScrollView
+    Image, Dimensions, Keyboard, StyleSheet, Text, SafeAreaView, Item, Icon, Button, Input,
+    TextInput, View, PanResponder, TouchableOpacity, ScrollView
 } from 'react-native'
-import FootersTabs from '../../component/footer'
-import Employee from '../../component/employee'
-import InventoryForm from '../../component/inventoryForm'
-import Logo from '../../component/logo'
+// import FootersTabs from '../../component/footer'
+// import Employee from '../../component/employee'
+// import InventoryForm from '../../component/inventoryForm'
+// import Logo from '../../component/logo'
 import { DatePicker } from 'native-base'
 import AppContainer from '../../component/AppContainer'
 
 
-
-
-
-// const screenWidth = Dimensions.get('screen').width
-// const screenHeight = Dimensions.get('screen').height
 export default class AddProducts extends React.Component {
     constructor() {
         super()
@@ -29,7 +18,6 @@ export default class AddProducts extends React.Component {
     }
 
     render() {
-
         var { height, width } = Dimensions.get('window');
         return (
 

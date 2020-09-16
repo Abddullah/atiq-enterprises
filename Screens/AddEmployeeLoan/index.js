@@ -1,43 +1,105 @@
 import React, { Component } from 'react'
 import {
-    Image,
-    Dimensions, Keyboard,
-    StyleSheet,
-    Text,
+    Image, Dimensions, Keyboard, StyleSheet, Text, Alert,
     SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder,
-    TouchableOpacity,
-    ScrollView
+    View, PanResponder, TouchableOpacity, ScrollView
 } from 'react-native'
-import FootersTabs from '../../component/footer'
+import { Tabs, Tab, TabHeading } from 'native-base';
+
 import AppContainer from '../../component/AppContainer'
-import Employee from '../../component/employee'
-import Logo from '../../component/logo'
+// import FootersTabs from '../../component/footer'
+// import Employee from '../../component/employee'
+// import Logo from '../../component/logo'
 import { DatePicker } from 'native-base'
+import { connect } from "react-redux";
 
+// local DB and schema
+// const Realm = require('realm');
+// import AddEmployeeSchema from '../../realm/Schema'
+// components
+import AddEmployee from '../../Screens/AddEmployeeLoan/AddEmployee'
+import Addloan from '../../Screens/AddEmployeeLoan/addloan'
 
-
-// const screenWidth = Dimensions.get('screen').width
-// const screenHeight = Dimensions.get('screen').height
-export default class AddEmployeeLoan extends React.Component {
+class AddEmployeeLoan extends React.Component {
     constructor() {
         super()
-        this.state = {}
+        this.state = {
+            activeColor: "addemployee"
+        }
+    }
+
+    activeColor(key) {
+        if (key.ref.key == ".0") {
+            this.setState({
+                activeColor: "addemployee"
+            })
+        }
+        if (key.ref.key == ".1") {
+            this.setState({
+                activeColor: "addemployeeloan"
+            })
+        }
+        if (key.ref.key == ".2") {
+            this.setState({
+                activeColor: "searchemployee"
+            })
+        }
+
     }
 
     render() {
-
-        var { height, width } = Dimensions.get('window');
+        const { activeColor } = this.state
+        console.log(this.props.bseUrl, "bseUrl")
         return (
             <AppContainer pageName={'Add Employee Loan'} navigation={this.props.navigation} >
-                <View style={{ flex: 1 }} >
+                <Tabs
+                    tabContainerStyle={{ height: 60 }}
+                    onChangeTab={(key) => this.activeColor(key)}
+                    locked={true}
+                    tabBarUnderlineStyle={{ backgroundColor: '#FD6958' }}
+                >
+                    {/* //Add Employee// */}
+                    <Tab
+                        heading={
+                            <TabHeading style={{ flexDirection: "column", backgroundColor: "white" }}>
+                                <Text style={{ color: activeColor === "addemployee" ? "#FD6958" : "black" }}>Add Employee</Text>
+                            </TabHeading>}
+                    >
+                        <AddEmployee />
+                    </Tab>
+
+                    {/* //Add Employee loan// */}
+                    <Tab
+                        heading={
+                            <TabHeading style={{ flexDirection: "column", backgroundColor: "white" }}>
+                                <Text style={{ color: activeColor === "addemployeeloan" ? "#FD6958" : "black" }}>Add Employee loan</Text>
+                            </TabHeading>
+                        }
+                    >
+                        <Addloan />
+                    </Tab>
+
+                    {/* //Search Employee loan// */}
+                    <Tab
+                        heading={
+                            <TabHeading style={{ flexDirection: "column", backgroundColor: "white" }}>
+                                <Text style={{ color: activeColor === "searchemployee" ? "#FD6958" : "black" }}>Search Employee loan</Text>
+                            </TabHeading>
+                        }
+                    >
+                        <View>
+                            <Text>Testing1</Text>
+                        </View>
+                    </Tab>
+                </Tabs>
+
+                {/* <View style={{ flex: 1 }} >
                     <ScrollView style={{ flex: 1 }}>
                         <View style={{ height: height * 0.777, alignItems: "center" }}>
                             <View style={styles.mainView}>
                                 <View style={styles.addExpenseForm}>
                                     <View style={styles.expenseForm}>
-
-                                        <View style={[styles.dateTime, { flex: 1.5 }]}>
+                                        <View style={[styles.dateTime, { flex: 1.5, }]}>
                                             <TextInput
                                                 placeholder={"Select Employee Name"}
                                                 placeholderStyle={styles.text}
@@ -48,10 +110,9 @@ export default class AddEmployeeLoan extends React.Component {
                                         </View>
                                         <View style={styles.dateTime}>
                                             <DatePicker
-
                                                 textStyle={'grey'}
                                                 placeHolderText='Date'
-                                                placeHolderTextStyle={{ color: 'grey', fontWeight: 'bold', marginTop: -8 }}
+                                                placeHolderTextStyle={{ color: 'grey', fontWeight: 'bold', }}
                                                 onDateChange={(date) => this.setState({ date })}
                                             />
                                         </View>
@@ -60,15 +121,15 @@ export default class AddEmployeeLoan extends React.Component {
                                                 placeholder={"Amount"}
                                                 placeholderStyle={styles.text}
                                                 style={styles.input}
+                                                keyboardType="numeric"
                                                 onChangeText={(text) => { this.setState({ amount: text }) }}
                                                 value={this.state.amount}
                                             />
                                         </View>
-                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.delete()}>
+                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.save()}>
                                             <Text style={styles.saveBtnText}>Save</Text>
                                         </TouchableOpacity>
                                     </View>
-
 
                                     <View style={styles.employeeView}>
                                         <View style={{ width: '30%', padding: "2%" }}>
@@ -95,11 +156,24 @@ export default class AddEmployeeLoan extends React.Component {
                             </View>
                         </View>
                     </ScrollView>
-                </View>
+                </View> */}
             </AppContainer>
         )
     }
 }
+
+let mapStateToProps = state => {
+    return {
+        bseUrl: state.root.bseUrl,
+    };
+};
+
+function mapDispatchToProps(dispatch) {
+    return ({
+    })
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddEmployeeLoan);
 
 const styles = StyleSheet.create({
     container: {},
@@ -108,48 +182,57 @@ const styles = StyleSheet.create({
         height: '94.5%',
         // justifyContent: 'center',
         alignItems: 'center',
+        // backgroundColor:"red"
     },
     addExpenseForm: {
         height: "75%",
         display: 'flex',
         width: '90%',
         justifyContent: 'center',
-        padding: '2%'
+        padding: '2%',
+        // backgroundColor:"blue"
     },
     expenseForm: {
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        marginBottom: '8%',
+        height: 50,
+        // marginBottom: '8%',
         // borderWidth:1
+        // backgroundColor: "yellow"
+
     },
     dateTime: {
         flex: 1,
-        height: 50,
+        // height: 50,
+        // padding: "2%"
         marginRight: '2%',
         borderWidth: 1,
         borderRadius: 5,
         borderColor: 'grey',
-        padding: "2%"
     },
     amount: {
-        flex: 1,
-        height: 50,
+        // width: 50,
+        flex: 0.5,
+        // height: 50,
         borderWidth: 1,
         borderRadius: 5,
         borderColor: 'grey',
-        padding: "2%"
+        // padding: "2%"
+
     },
     saveBtn: {
         marginLeft: '2%',
-        height: 50,
+        // height: 50,
         // marginRight: '5%',
         flex: 0.5,
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: '#003366',
         borderColor: 'grey',
-        padding: "2%"
+        justifyContent: "center",
+        alignItems: "center"
+        // padding: "2%"
     },
     saveBtnText: {
         color: '#fff',
@@ -157,10 +240,11 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     input: {
+        marginLeft: "2%",
         fontSize: 17,
         fontWeight: 'bold',
-        height: 40,
-        marginTop: -5
+        // height: 40,
+        // marginTop: "-5%"
     },
     employeeView: {
         marginTop: '2%',
@@ -176,7 +260,9 @@ const styles = StyleSheet.create({
     },
     text: {
         color: "grey",
-        fontWeight: 'bold'
+        // color: "grey",
+        fontWeight: 'bold',
+        // marginLeft: 25
     },
     editDeleteBTn: {
         width: '40%',
@@ -185,6 +271,3 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     }
 })
-
-
-// export default Home

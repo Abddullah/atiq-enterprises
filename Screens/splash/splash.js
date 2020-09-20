@@ -11,9 +11,9 @@ class AuthLoading extends React.Component {
     }
 
     componentDidMount() {
-        console.log('sssssssssssss')
-        // this.props.getEmployee(this.props.navigation)
-        // this.props.getEmployeeLoan(this.props.navigation)
+        // console.log('sssssssssssss')
+        this.props.getEmployee(this.props.navigation)
+        this.props.getEmployeeLoan(this.props.navigation)
 
 
         // if (user) {

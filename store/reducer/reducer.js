@@ -1,8 +1,10 @@
 const INITIAL_STATE = {
     //API's URL
     // bseUrl: "https://fathomless-citadel-43321.herokuapp.com",
-    bseUrl: "http://192.168.0.112:3002",
-    employee:[],
+    bseUrl: "http://192.168.43.45:3002",
+    employee: [],
+    employeeLoan: [],
+    save: false,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -12,6 +14,17 @@ export default (state = INITIAL_STATE, action) => {
             return {
                 ...state,
                 employee: action.payload
+            };
+        case "ADD_EMPLOYEE_LOAN":
+            return {
+                ...state,
+                employeeLoan: action.payload
+            };
+
+        case "SAVE":
+            return {
+                ...state,
+                save: action.payload
             };
         default:
             return state;

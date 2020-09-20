@@ -2,7 +2,7 @@ import React from 'react';
 import { ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, View, Image, ImageBackground } from 'react-native';
 // import Logo from '../../component/logo'
 import { connect } from "react-redux";
-import { getEmployee } from '../../Store/Action/action';
+import { getEmployee, getEmployeeLoan } from '../../store/action/action';
 
 
 class AuthLoading extends React.Component {
@@ -11,7 +11,11 @@ class AuthLoading extends React.Component {
     }
 
     componentDidMount() {
-        this.props.getEmployee(this.props.navigation)
+        console.log('sssssssssssss')
+        // this.props.getEmployee(this.props.navigation)
+        // this.props.getEmployeeLoan(this.props.navigation)
+
+
         // if (user) {
         //     // User is signed in.
         //     this.props.navigation.navigate('AppStackUser');
@@ -70,6 +74,9 @@ function mapDispatchToProps(dispatch) {
     return ({
         getEmployee: (navigation) => {
             dispatch(getEmployee(navigation))
+        },
+        getEmployeeLoan: (navigation) => {
+            dispatch(getEmployeeLoan(navigation))
         },
     })
 }

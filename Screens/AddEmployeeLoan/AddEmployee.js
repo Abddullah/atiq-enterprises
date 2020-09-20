@@ -3,7 +3,7 @@ import {
     Dimensions, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Alert
 } from 'react-native'
 import { connect } from "react-redux";
-import { addEmployee, deleteEmployee } from '../../Store/Action/action';
+import { addEmployee, deleteEmployee, updateEmployee } from '../../store/action/action';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 // local DB and schema
@@ -15,21 +15,32 @@ class AddEmployee extends Component {
         super(props)
         this.state = {
             employee: [],
-            name: "Abdullah shah",
-            phone: "03452153709",
-            address: "r592",
-            cnic: "42101",
+            name: "Abdullah",
+            phone: "034521537",
+            address: "r5922",
+            cnic: "42101-98749823",
         }
     }
 
     UNSAFE_componentWillMount() {
-        let { employee } = this.props
-        this.setState({ employee: employee })
+        let { employee, save } = this.props
+        this.setState({ employee: employee, })
+        if (save) {
+            this.setState({
+                update: false,
+                name: "",
+                phone: "",
+                address: "",
+                cnic: ""
+            })
+        }
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
+        let { save } = this.props
+
         console.log(nextProps, "nextProps")
-        this.setState({ employee: nextProps.employee })
+        this.setState({ employee: nextProps.employee, save, })
     }
 
     save() {
@@ -43,12 +54,12 @@ class AddEmployee extends Component {
                 id: parseInt(Date.now() + cnic),
             }
             this.props.addEmployee(cloneEmployeeDetails)
-            // this.setState({
-            //     name: "",
-            //     phone: "",
-            //     address: "",
-            //     cnic: ""
-            // })
+            this.setState({
+                name: "",
+                phone: "",
+                address: "",
+                cnic: ""
+            })
         }
         else {
             Alert.alert("All fields are required")
@@ -59,9 +70,37 @@ class AddEmployee extends Component {
         console.log(key, "DELETED_KEY")
         this.props.deleteEmployee(key)
     }
+    update() {
+        const { updateItem, name, phone, address, cnic } = this.state
+        var id = updateItem.id
+        if (name != "" && phone != "" && address != "" && cnic != "") {
+            let updatedEmployeeDetails = {
+                name: name,
+                phone: phone,
+                address: address,
+                cnic: cnic,
+                // id: parseInt(Date.now() + cnic),
+            }
+            this.props.updateEmployee(id, updatedEmployeeDetails)
+            this.setState({
+                name: "",
+                phone: "",
+                address: "",
+                cnic: ""
+            })
+        }
+        else {
+            Alert.alert("All fields are required")
+        }
+
+
+
+        // this.setState({ update: true })
+        // console.log(key, "EDIT_KEY")
+    }
 
     render() {
-        let { employee, name, phone, address, cnic } = this.state
+        let { employee, name, phone, address, cnic, update } = this.state
         let { } = this.props
         var { height, width } = Dimensions.get('window');
 
@@ -112,10 +151,17 @@ class AddEmployee extends Component {
                                         value={cnic}
                                     />
                                 </View>
+                                {
+                                    update ?
+                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.update()}>
+                                            <Text style={styles.saveBtnText}>Update</Text>
+                                        </TouchableOpacity>
+                                        :
+                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.save()}>
+                                            <Text style={styles.saveBtnText}>Save</Text>
+                                        </TouchableOpacity>
+                                }
 
-                                <TouchableOpacity style={styles.saveBtn} onPress={() => this.save()}>
-                                    <Text style={styles.saveBtnText}>Save</Text>
-                                </TouchableOpacity>
 
                             </View>
 
@@ -168,7 +214,18 @@ class AddEmployee extends Component {
                                                         alignItems: "center"
                                                         // borderColor: "#FFCB05",
                                                         // backgroundColor: '#FFCB05',
-                                                    }}>
+                                                    }}
+                                                        onPress={() => {
+                                                            this.setState({
+                                                                update: true,
+                                                                name: key.name,
+                                                                phone: key.phone,
+                                                                address: key.address,
+                                                                cnic: key.cnic,
+                                                                updateItem: key,
+                                                            })
+                                                        }}
+                                                    >
                                                         <AntDesign name="edit" style={{ color: 'green', fontWeight: 'bold', fontSize: 28, }} />
                                                     </TouchableOpacity>
                                                 </View>
@@ -208,6 +265,9 @@ class AddEmployee extends Component {
 let mapStateToProps = state => {
     return {
         employee: state.root.employee,
+        save: state.root.save,
+
+
     };
 };
 
@@ -218,6 +278,9 @@ function mapDispatchToProps(dispatch) {
         },
         deleteEmployee: (key) => {
             dispatch(deleteEmployee(key))
+        },
+        updateEmployee: (key, updated_data) => {
+            dispatch(updateEmployee(key, updated_data))
         },
     })
 }

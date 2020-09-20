@@ -19,6 +19,8 @@ import { connect } from "react-redux";
 // components
 import AddEmployee from '../../Screens/AddEmployeeLoan/AddEmployee'
 import Addloan from '../../Screens/AddEmployeeLoan/addloan'
+import SearchEmployeeLoan from '../../Screens/SearchEmployeLoan/index'
+
 
 class AddEmployeeLoan extends React.Component {
     constructor() {
@@ -53,7 +55,7 @@ class AddEmployeeLoan extends React.Component {
         return (
             <AppContainer pageName={'Add Employee Loan'} navigation={this.props.navigation} >
                 <Tabs
-                    tabContainerStyle={{ height: 60 }}
+                    tabContainerStyle={{ height: 60, marginBottom:10 }}
                     onChangeTab={(key) => this.activeColor(key)}
                     locked={true}
                     tabBarUnderlineStyle={{ backgroundColor: '#FD6958' }}
@@ -87,9 +89,7 @@ class AddEmployeeLoan extends React.Component {
                             </TabHeading>
                         }
                     >
-                        <View>
-                            <Text>Testing1</Text>
-                        </View>
+                        <SearchEmployeeLoan />
                     </Tab>
                 </Tabs>
 

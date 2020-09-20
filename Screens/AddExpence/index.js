@@ -5,7 +5,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { setDataReducer } from "../../Store/Action/action";
+import { setDataReducer } from "../../store/action/action";
 
 import FootersTabs from '../../component/footer'
 import AppContainer from '../../component/AppContainer'

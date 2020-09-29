@@ -61,8 +61,6 @@ class SearchEmployeeLoan extends React.Component {
         return (
             // <AppContainer pageName={'Search Emplyee Loan'} navigation={this.props.navigation} >
             <View style={{ flex: 1 }} >
-
-
                 <ScrollView style={{ flex: 1 }}>
                     <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
                         <View style={styles.mainView}>

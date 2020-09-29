@@ -1,8 +1,8 @@
 import React from 'react';
-import { ActivityIndicator, AsyncStorage, StatusBar, StyleSheet, Text, View, Image, ImageBackground } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View, Image, } from 'react-native';
 // import Logo from '../../component/logo'
 import { connect } from "react-redux";
-import { getEmployee, getEmployeeLoan } from '../../store/action/action';
+import { getEmployee, getEmployeeLoan, getProducts } from '../../store/action/action';
 
 
 class AuthLoading extends React.Component {
@@ -14,6 +14,7 @@ class AuthLoading extends React.Component {
         // console.log('sssssssssssss')
         this.props.getEmployee(this.props.navigation)
         this.props.getEmployeeLoan(this.props.navigation)
+        this.props.getProducts(this.props.navigation)
 
 
         // if (user) {
@@ -30,7 +31,7 @@ class AuthLoading extends React.Component {
         return (
             <View style={styles.container}>
 
-                <View
+                {/* <View
                     style={{
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -49,13 +50,27 @@ class AuthLoading extends React.Component {
                 >
                     <Text style={{ color: "white", fontSize: 20 }}>Atiq</Text>
                     <Text style={{ color: "white", fontSize: 20 }}>Enterprise</Text>
+                </View> */}
+
+                <View
+                    style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        shadowColor: "#000",
+                        // backgroundColor: "red",
+                    }}
+                >
+                    <Image source={require('../../assets/logo.png')} resizeMode="contain"
+                        style={{ height: "50%", width: "50%", }}
+                    />
                 </View>
 
-                <View style={{ flexDirection: "row", marginTop: 20, }}>
-                    <View style={{ marginTop: 20, }}>
+                <View style={{ flexDirection: "row", marginTop: -50, }}>
+                    <View style={{ marginTop: 0, }}>
                         <Text style={{ fontSize: 20, color: "#003366" }}>Loading...</Text>
                     </View>
-                    <ActivityIndicator style={{ marginTop: 20, marginLeft: 10 }} size={30} color="#003366" />
+                    <ActivityIndicator style={{ marginTop: 0, marginLeft: 10 }} size={30} color="#003366" />
                 </View>
 
             </View>
@@ -77,6 +92,9 @@ function mapDispatchToProps(dispatch) {
         },
         getEmployeeLoan: (navigation) => {
             dispatch(getEmployeeLoan(navigation))
+        },
+        getProducts: (navigation) => {
+            dispatch(getProducts(navigation))
         },
     })
 }

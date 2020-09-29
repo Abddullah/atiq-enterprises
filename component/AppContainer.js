@@ -20,7 +20,10 @@ export default class AppContainer extends React.Component {
         return (
             <View style={{ flex: 1, }}>
                 <View style={[styles.header, { height: height * 0.155, }]}>
-                    <View style={{ flex: 1 }}>
+                    <View style={{
+                        flex: 1, marginLeft: "2%",
+                        justifyContent: "center", alignItems: "center",
+                    }}>
                         <Logo />
                     </View>
                     <View style={{ flex: 9, justifyContent: 'center', }}>

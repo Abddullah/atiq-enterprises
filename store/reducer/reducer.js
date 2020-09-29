@@ -4,11 +4,11 @@ const INITIAL_STATE = {
     bseUrl: "http://192.168.43.45:3002",
     employee: [],
     employeeLoan: [],
+    productsList: [],
+    expense: [],
     save: false,
 };
-
 export default (state = INITIAL_STATE, action) => {
-    // console.log(action, "ACTIONaaaaaaa")
     switch (action.type) {
         case "ADD_EMPLOYEE":
             return {
@@ -20,7 +20,16 @@ export default (state = INITIAL_STATE, action) => {
                 ...state,
                 employeeLoan: action.payload
             };
-
+        case "ADD_PRODUCT":
+            return {
+                ...state,
+                productsList: action.payload
+            };
+        case "ADD_EXPENSE":
+            return {
+                ...state,
+                expense: action.payload
+            };
         case "SAVE":
             return {
                 ...state,

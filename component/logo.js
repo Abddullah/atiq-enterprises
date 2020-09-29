@@ -15,10 +15,29 @@ export default class Logo extends React.Component {
     render() {
         var { height, width } = Dimensions.get('window');
         return (
-            <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: '#003366', borderRadius: 50, display: 'flex', height: "100%", width: "75%", }}>
-                <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff', letterSpacing: 2 }}>Atiq</Text>
-                <Text style={{ fontWeight: 'bold', color: '#fff', letterSpacing: 1.5 }}>Enterprise</Text>
+            // <View style={{
+            //     alignItems: 'center', justifyContent: 'center',
+            //     borderRadius: 100, display: 'flex',
+            //     height: 110, width: 110,
+            //     backgroundColor: '#003366',
+            // }}>
+            //     <Text style={{ fontSize: 17, fontWeight: '700', color: '#fff', letterSpacing: 2 }}>Atiq</Text>
+            //     <Text style={{ fontWeight: 'bold', color: '#fff', letterSpacing: 1.5 }}>Enterprise</Text>
+            // </View>
+
+            <View
+                style={{
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "100%",
+                    // backgroundColor: "red",
+                }}
+            >
+                <Image source={require('../assets/logo.png')} resizeMode="contain"
+                    style={{ height: 100, width: 100, }}
+                />
             </View>
+
         )
     }
 }

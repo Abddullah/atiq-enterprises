@@ -15,14 +15,14 @@ import EmployeeRecord from '../Screens/EmployeeRecord/index'
 
 const AppStack = createStackNavigator(
     {
+        AddInventory: { screen: AddInventory },
+        AddExpense: { screen: AddExpense },
         AddProducts: { screen: AddProducts },
         AddEmployeeLoan: { screen: AddEmployeeLoan },
-        AddInventory: { screen: AddInventory },
-        Home: { screen: Home },
-        AddExpense: { screen: AddExpense },
         Report: { screen: Report },
-        SearchEmployeeLoan: { screen: SearchEmployeeLoan },
-        EmployeeRecord: { screen: EmployeeRecord },
+        // Home: { screen: Home },
+        // SearchEmployeeLoan: { screen: SearchEmployeeLoan },
+        // EmployeeRecord: { screen: EmployeeRecord },
     },
     {
         headerMode: 'none',

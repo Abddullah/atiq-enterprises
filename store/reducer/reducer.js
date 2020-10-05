@@ -5,7 +5,8 @@ const INITIAL_STATE = {
     employee: [],
     employeeLoan: [],
     productsList: [],
-    expense: [],
+    expenseList: [],
+    inventoryList: [],
     save: false,
 };
 export default (state = INITIAL_STATE, action) => {
@@ -28,7 +29,12 @@ export default (state = INITIAL_STATE, action) => {
         case "ADD_EXPENSE":
             return {
                 ...state,
-                expense: action.payload
+                expenseList: action.payload
+            };
+        case "ADD_INVENTORY":
+            return {
+                ...state,
+                inventoryList: action.payload
             };
         case "SAVE":
             return {

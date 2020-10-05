@@ -26,58 +26,24 @@ class Addloan extends Component {
 
     UNSAFE_componentWillMount() {
         const { employee, employeeLoan } = this.props
-        // console.log(employee, employeeLoan, "Employee_loan")
-        if (employeeLoan.length) {
-            // let test = []
-            // for (var i = employeeLoan.length - 1; i >= 0; i--) {
-            //     // console.log(employeeLoan[i], "reverseeee");
-            //     const result = employeeLoan.filter(object => object.name === employeeLoan[i].name);
-            //     let Tamount = 0;
-            //     result.sort(function (a, b) {
-            //         return b.date - a.date
-            //     });
-            //     test.push(result[0]);
-            //     for (let index = 0; index < result.length; index++) {
-            //         Tamount = Tamount + Number(result[index].amount);
-            //     }
-            //     if (i < result.length) {
-            //         console.log("The number is even.");
-            //         test[i].amount = Tamount
-            //     }
-            //     // test.splice(index,1,result[0]);
-            //     // test = result.slice(0, 1);
-            //     // // result[0].amount=Tamount
-            //     console.log(result, "resultresult", Tamount, test)
-            // }
 
-            // //  let array = test.filter(object => object.name === employeeLoan[i].name);
-            // for (let index = 0; index < test.length; index++) {
-            //     if (index % 2 === 0) {
-            //         test.splice(index, 1)
-            //         console.log("The number is even.");
-            //     }
-
-            // }
-            // console.log(test, "working fine")
-
-
-
-
-            // let result;
-            // for (let index = 0; index < employeeLoan.length; index++) {
-            //     let myObj = employeeLoan[index];
-            //     let name = employeeLoan[index].name;
-            //     result = employeeLoan.filter(object => object.name === employeeLoan[index].name);
-
-            //     // var keys = Object.keys(element); //get keys from object as an array
-            //     // console.log(element, keys, "object_keys")
-            //     // keys.forEach(function (key) { //loop through keys array
-            //     //     console.log(key, key == myString)
-            //     // });
-            // }
-            // console.log(result, "Element")
-
-        }
+        // let updatedemployee = []
+        // let totalAmount = 0
+        // for (let index = 0; index < employeeLoan.length; index++) {
+        //     var updatedemployeeChk = updatedemployee.filter(employee => employee.name === employeeLoan[index].name);
+        //     if (updatedemployeeChk.length === 0) {
+        //         var nameList = employeeLoan.filter(employee => employee.name === employeeLoan[index].name);
+        //         nameList.sort(function (a, b) {
+        //             return b.date - a.date;
+        //         });
+        //         for (let i = 0; i < nameList.length; i++) {
+        //             totalAmount = totalAmount + Number(nameList[i].amount)
+        //         }
+        //         nameList[0].amount = totalAmount
+        //         updatedemployee.push(nameList[0])
+        //         totalAmount = 0
+        //     }
+        // }
 
         var name = []
         if (employee && employee.length) {
@@ -94,12 +60,32 @@ class Addloan extends Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { employee, employeeLoan } = nextProps
+
+        // let updatedemployee = []
+        // let totalAmount = 0
+        // for (let index = 0; index < employeeLoan.length; index++) {
+        //     var updatedemployeeChk = updatedemployee.filter(employee => employee.name === employeeLoan[index].name);
+        //     if (updatedemployeeChk.length === 0) {
+        //         var nameList = employeeLoan.filter(employee => employee.name === employeeLoan[index].name);
+        //         nameList.sort(function (a, b) {
+        //             return b.date - a.date;
+        //         });
+        //         for (let i = 0; i < nameList.length; i++) {
+        //             totalAmount = totalAmount + Number(nameList[i].amount)
+        //         }
+        //         nameList[0].amount = totalAmount
+        //         updatedemployee.push(nameList[0])
+        //         totalAmount = 0
+        //     }
+        // }
+
         var name = []
         if (employee && employee.length) {
             employee.map((key, index) => {
                 name.push(key.name)
             })
         }
+
         this.setState({
             employee,
             employeeLoan,

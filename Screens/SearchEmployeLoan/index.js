@@ -95,7 +95,6 @@ class SearchEmployeeLoan extends React.Component {
                                 {
                                     loanEmployeeSort && loanEmployeeSort.length ?
                                         loanEmployeeSort.map((key, index) => {
-                                            console.log(key, 'key__key')
                                             return (
                                                 <View style={styles.employeeView}>
                                                     <View style={{ width: '30%', padding: "2%" }}>
@@ -120,6 +119,9 @@ class SearchEmployeeLoan extends React.Component {
                                             )
                                         })
                                         : null
+                                    // <View>
+                                    //     <Text>There is no data</Text>
+                                    // </View>
                                 }
                             </View>
                         </View>
@@ -137,7 +139,6 @@ let mapStateToProps = state => {
         employee: state.root.employee,
         save: state.root.save,
         employeeLoan: state.root.employeeLoan
-
     };
 };
 

@@ -159,5 +159,51 @@ export const localDbExpenseKeyForUpdateMongoDbSchema = {
         id: 'int',
     }
 };
-
 /* Add expense scheema's End */
+
+/* Add Inventory scheema's Start */
+export const AddInventory = {
+    name: 'inventory',
+    primaryKey: 'id',
+    properties: {
+        id: 'int',
+        dateAndTime: { type: 'string', optional: true },
+        employeeName: { type: 'string', optional: true },
+        product: { type: 'string', optional: true },
+        totalAmount: { type: 'int', optional: true },
+        advanceDetection: { type: 'int', optional: true },
+        loanDetection: { type: 'int', optional: true },
+        finalAmount: { type: 'int', optional: true },
+    }
+};
+
+export const localDbInventoryKeyForSaveMongoDbSchema = {
+    // save key //
+    name: 'localDbInventoryKeyForSaveMongoDb',
+    primaryKey: 'id',
+    properties: {
+        id: 'int',
+    }
+};
+
+export const localDbInventoryKeyForDeleteMongoDbSchema = {
+    // delete key //
+    name: 'localDbInventoryKeyForDeleteMongoDb',
+    primaryKey: 'id',
+    properties: {
+        id: 'int',
+    }
+};
+
+export const localDbInventoryKeyForUpdateMongoDbSchema = {
+    // update key //
+    name: 'localDbInventoryKeyForUpdateMongoDb',
+    primaryKey: 'id',
+    properties: {
+        id: 'int',
+    }
+};
+
+
+
+

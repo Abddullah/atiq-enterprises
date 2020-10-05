@@ -85,7 +85,7 @@ class SearchEmployeeLoan extends React.Component {
                             </View>
                             <Text style={styles.searchDateText}>Search by Date</Text>
                             <Text style={styles.productNameText}>Employee List</Text>
-                            <View style={{ flex: 0.5, backgroundColor: "yellow" }}>
+                            <View style={{ flex: 0.5, }}>
                                 <ScrollView showsVerticalScrollIndicator={false} >
                                     {
                                         loanEmployeeSort && loanEmployeeSort.length ?
@@ -147,7 +147,9 @@ class SearchEmployeeLoan extends React.Component {
 
                                                 )
                                             })
-                                            : null
+                                            : <View>
+                                                <Text>There is no data</Text>
+                                            </View>
                                     }
                                 </ScrollView>
                             </View>

@@ -1,188 +1,905 @@
 import React, { Component } from 'react'
-import {
-    Image,
-    Dimensions, Keyboard,
-    StyleSheet,
-    Text,
-    SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    ScrollView
-} from 'react-native'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { DatePicker } from 'native-base'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { Dimensions, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Picker, Items, Alert } from 'react-native'
+// import { DatePicker } from 'native-base'
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
-
-
-import FootersTabs from '../../component/footer'
-import Employee from '../../component/employee'
-import InventoryForm from '../../component/inventoryForm'
+import DatePicker from 'react-native-datepicker'
+// components
 import AppContainer from '../../component/AppContainer'
+// moment for time converting
+import moment from 'moment';
+// vector icons
+import Fontisto from 'react-native-vector-icons/Fontisto'
+// store
+import { connect } from "react-redux";
+import { saveInventorys, deleteInventory } from '../../store/action/action';
 
-
-
-// const screenWidth = Dimensions.get('screen').width
-// const screenHeight = Dimensions.get('screen').height
-export default class AddInventory extends React.Component {
+class AddInventory extends React.Component {
     constructor() {
         super()
-        this.state = {}
+        this.state = {
+            totalAmount: 0,
+            finalAmount: 0,
+            advanceDetection: 0,
+            loanDetection: 0,
+            selectedProducts: [],
+            employeeNameList: [],
+            productsName: [],
+            dateAndTime: "",
+            selectedEmployee: "",
+            inventoryItemsQty: ["1"],
+            inventoryList: []
+
+        }
     }
 
+    UNSAFE_componentWillMount() {
+        const { employee, productsList, inventoryList } = this.props
+        // console.log(productsList, "UNSAFE_componentWillMount")
+        let updatedProduct = []
+        for (let index = 0; index < productsList.length; index++) {
+            var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
+            if (updatedProductChk.length === 0) {
+                var indProduct = productsList.filter(product => product.productName === productsList[index].productName);
+                indProduct.sort(function (a, b) {
+                    return b.dateAndTime - a.dateAndTime;
+                });
+                updatedProduct.push(indProduct[0])
+            }
+        }
+        var name = []
+        if (employee && employee.length) {
+            employee.map((key, index) => {
+                name.push(key.name)
+            })
+        }
+        this.setState({
+            employeeNameList: name,
+            productsName: updatedProduct,
+        })
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        const { employee, productsList } = nextProps
+        // console.log(productsList, "UNSAFE_componentWillReceiveProps")
+        let updatedProduct = []
+        for (let index = 0; index < productsList.length; index++) {
+            var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
+            if (updatedProductChk.length === 0) {
+                var indProduct = productsList.filter(product => product.productName === productsList[index].productName);
+                indProduct.sort(function (a, b) {
+                    return b.dateAndTime - a.dateAndTime;
+                });
+                updatedProduct.push(indProduct[0])
+            }
+        }
+        var name = []
+        if (employee && employee.length) {
+            employee.map((key, index) => {
+                name.push(key.name)
+            })
+        }
+        this.setState({
+            employeeNameList: name,
+            productsName: updatedProduct,
+        })
+    }
+
+    setDateAndTime(date, time) {
+        this.setState({
+            dateAndTime: date
+        })
+    }
+
+    setEmployee(itemValue, itemIndex) {
+        this.setState({
+            selectedEmployee: itemValue,
+        })
+    }
+
+    setSelectedValue(itemValue, itemIndex) {
+        const { productsName } = this.state
+        var soortedData = productsName.filter(product => product.productName === itemValue);
+        this.setState({
+            [`selectedProduct${itemIndex}`]: itemValue,
+            [`rate${itemIndex}`]: soortedData[0].productSellingRate,
+        })
+    }
+
+    addExtraField() {
+        let { inventoryItemsQty, } = this.state
+        inventoryItemsQty.push("1")
+        this.setState({ inventoryItemsQty, inventoryItemsQty });
+    }
+
+    delExtraField(index) {
+        let { inventoryItemsQty, selectedProducts, advanceDetection, loanDetection } = this.state
+        inventoryItemsQty.splice(index, 1)
+        selectedProducts.splice(index, 1)
+        let totalAmount = 0
+        for (let index = 0; index < selectedProducts.length; index++) {
+            let element = selectedProducts[index].amount;
+            totalAmount = totalAmount + element
+        }
+        if (advanceDetection != 0 && loanDetection != 0) {
+            let updatedAmount = totalAmount - advanceDetection - loanDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else if (advanceDetection != 0) {
+            let updatedAmount = totalAmount - advanceDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else if (loanDetection != 0) {
+            let updatedAmount = totalAmount - loanDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else {
+            this.setState({
+                finalAmount: totalAmount
+            })
+        }
+        this.setState({
+            inventoryItemsQty, inventoryItemsQty,
+            selectedProducts, selectedProducts,
+            totalAmount: totalAmount,
+            [`weight${index}`]: undefined,
+            [`rate${index}`]: undefined,
+            [`amount${index}`]: undefined,
+            [`selectedProduct${index}`]: undefined,
+        });
+    }
+
+    calculateRateAmount(waight, index) {
+        let product = this.state[`selectedProduct${index}`]
+        if (product) {
+            let rate = this.state[`rate${index}`]
+            let amount = waight * rate
+            console.log(amount, index, "Amount_Generate")
+            this.setState({
+                [`weight${index}`]: waight,
+                [`amount${index}`]: amount,
+            })
+        }
+        else {
+            Alert.alert("Please select product")
+        }
+    }
+
+    createProductObject(index) {
+        let { selectedProducts, advanceDetection, loanDetection } = this.state
+        let totalAmount = 0
+        let productName = this.state[`selectedProduct${index}`];
+        let weight = this.state[`weight${index}`];
+        let rate = this.state[`rate${index}`]
+        let amount = this.state[`amount${index}`];
+        let productObj = {
+            productName: productName,
+            waight: weight,
+            rate: rate,
+            amount: amount,
+        }
+        selectedProducts.push(productObj)
+        for (let index = 0; index < selectedProducts.length; index++) {
+            let element = selectedProducts[index].amount;
+            totalAmount = totalAmount + element
+        }
+        if (advanceDetection != 0 && loanDetection != 0) {
+            let updatedAmount = totalAmount - advanceDetection - loanDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else if (advanceDetection != 0) {
+            let updatedAmount = totalAmount - advanceDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else if (loanDetection != 0) {
+            let updatedAmount = totalAmount - loanDetection
+            this.setState({
+                finalAmount: updatedAmount
+            })
+        } else {
+            this.setState({
+                finalAmount: totalAmount
+            })
+        }
+        this.setState({
+            selectedProducts: selectedProducts,
+            totalAmount: totalAmount,
+        })
+    }
+
+    advanceDetection(text) {
+        let { totalAmount, loanDetection } = this.state
+        if (loanDetection != 0) {
+            let updatedAmount = totalAmount - loanDetection - Number(text)
+            this.setState({
+                advanceDetection: text,
+                finalAmount: updatedAmount
+            })
+        }
+        else {
+            let updatedAmount = totalAmount = totalAmount - Number(text)
+            this.setState({
+                advanceDetection: text,
+                finalAmount: updatedAmount
+            })
+        }
+    }
+
+    loanDetection(text) {
+        let { totalAmount, advanceDetection, } = this.state
+        if (advanceDetection != 0) {
+            let updatedAmount = totalAmount - advanceDetection - Number(text)
+            this.setState({
+                loanDetection: text,
+                finalAmount: updatedAmount
+            })
+        }
+        else {
+            let updatedAmount = totalAmount - Number(text)
+            this.setState({
+                loanDetection: text,
+                finalAmount: updatedAmount
+            })
+        }
+    }
+
+    setInventoryListDate(date) {
+        let { inventoryList } = this.props
+        let soortedData = inventoryList.filter(data => moment(Number(data.dateAndTime)).format("YYYY-MM-DD") === date);
+        let todaytotalAmount = 0
+        for (let index = 0; index < soortedData.length; index++) {
+            todaytotalAmount = todaytotalAmount + Number(soortedData[index].totalAmount);
+        }
+        this.setState({
+            inventoryListTime: date,
+            todaytotalAmount: todaytotalAmount,
+            inventoryList: soortedData,
+        })
+    }
+
+    saveInventory() {
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount } = this.state
+        var dateMiliSecond = moment(dateAndTime).format("x");
+        let cloneObject = {
+            dateAndTime: dateMiliSecond,
+            employeeName: selectedEmployee,
+            product: JSON.stringify(selectedProducts),
+            totalAmount: totalAmount,
+            advanceDetection: Number(advanceDetection),
+            loanDetection: Number(loanDetection),
+            finalAmount: finalAmount,
+            id: parseInt(Date.now() + dateAndTime)
+        }
+        // console.log(cloneObject, "Clone_object_for_save_inventory")
+        this.props.saveInventorys(cloneObject)
+        this.setState({
+            dateAndTime: "",
+            employeeName: "",
+            product: "",
+            totalAmount: 0,
+            advanceDetection: 0,
+            loanDetection: 0,
+            finalAmount: 0,
+            selectedEmployee: "",
+            inventoryItemsQty: ["1"],
+        })
+    }
+
+    deleteInventory() {
+        let { localDbKey } = this.state
+        this.props.deleteInventory(localDbKey)
+        this.setState({
+            dateAndTime: "",
+            employeeName: "",
+            product: "",
+            totalAmount: 0,
+            advanceDetection: 0,
+            loanDetection: 0,
+            finalAmount: 0,
+            selectedEmployee: "",
+            inventoryItemsQty: ["1"],
+        })
+    }
+
+    setAndSaveInventory(key, index) {
+        console.log(key, "setAndSaveInventory")
+        let products = JSON.parse(key.product)
+
+        let inventoryItemsQty = ["1"]
+
+        for (let index = 0; index < products.length; index++) {
+            inventoryItemsQty.push("1")
+        }
+
+        this.setState({
+            dateAndTime: key.dateAndTime,
+            employeeName: key.employeeName,
+            product: products,
+            totalAmount: key.totalAmount,
+            advanceDetection: key.advanceDetection,
+            loanDetection: key.loanDetection,
+            finalAmount: key.finalAmount,
+            selectedEmployee: key.selectedEmployee,
+            inventoryItemsQty: inventoryItemsQty,
+        })
+    }
+
+
+
     render() {
-        var productName = this.state.productName
-        // navigate={this.props.navigation}
-        // console.log(this.props.navigation, 'productName')
-        // weight = this.state.weight,
-        // rate = this.state.rate,
-        // amount = this.state.amount,
-        var { height, width } = Dimensions.get('window');
+        const { employeeNameList, productsName, dateAndTime,
+            selectedEmployee, inventoryItemsQty, totalAmount,
+            finalAmount, inventoryListTime, selectedProducts,
+            todaytotalAmount, inventoryList,
+        } = this.state
+        console.log(inventoryList, "Render_console")
+
         return (
             <AppContainer pageName={'Add Inventory'} navigation={this.props.navigation} >
-                <View style={{ flex: 1 }} >
-                    <ScrollView style={{ flex: 1, }}>
-                        <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
-                            <View style={styles.mainView}>
+                <View style={{
+                    flex: 1,
+                    alignItems: "center",
+                    marginTop: "2%",
+                    // backgroundColor: "red"
+                }} >
+                    <ScrollView contentContainerStyle={{ width: "100%", paddingBottom: 100 }} showsVerticalScrollIndicator={false} >
+                        <View style={styles.mainView}>
+                            <View style={{ flex: 3, }}>
+                                <View style={{ padding: 8, borderWidth: 0.5, borderColor: 'grey', borderRadius: 5 }}>
+                                    <View style={{ flexDirection: "row", width: "100%", }}>
+                                        <DatePicker showIcon={false}
+                                            style={{ width: "100%" }}
+                                            date={dateAndTime}
+                                            mode="datetime"
+                                            is24Hour={false}
+                                            placeholder="Date & Time"
+                                            format="YYYY-MM-DD hh:mm"
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            customStyles={{
+                                                placeholderText: {
+                                                    color: "grey",
+                                                    fontSize: 17,
+                                                    fontWeight: "bold",
+                                                    marginRight: "-10%",
+                                                },
+                                                dateInput: {
+                                                    height: 52,
+                                                    borderLeftWidth: 0,
+                                                    borderRightWidth: 0,
+                                                    borderTopWidth: 0,
+                                                    borderBottomWidth: 0,
+                                                    marginRight: "85%",
+                                                    fontWeight: "bold",
+                                                },
+                                                // ... You can check the source to find the other keys.
+                                            }}
+                                            onDateChange={(dateAndTime, time) => this.setDateAndTime(dateAndTime, time)}
+                                        />
+                                        <Fontisto style={{ color: "#4B534F", left: "-90%", top: 12 }} size={16} name={"date"} />
+                                    </View>
+                                </View>
 
-                                <View style={{ flex: 3, }}>
+                                <View style={{ padding: 8, marginTop: '1.5%', borderWidth: 0.5, borderColor: 'grey', borderRadius: 5 }}>
+                                    <Picker
+                                        mode="dropdown"
+                                        selectedValue={selectedEmployee}
+                                        style={{
+                                            fontWeight: "bold",
+                                            color: "grey",
+                                            width: "100%"
+                                        }}
+                                        onValueChange={(itemValue, itemIndex) => this.setEmployee(itemValue, itemIndex)}
+                                    >
+                                        <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Select Employee"} value={""} />
+                                        {
+                                            employeeNameList.map((key, index) => {
+                                                return (
+                                                    <Items style={{ fontSize: 12, fontWeight: "bold" }} label={key} value={key} key={index} />
+                                                )
+                                            })
+                                        }
+                                    </Picker>
+                                </View>
 
-                                    <View style={styles.addInventory}>
-                                        <View style={{ flex: 4 }}>
+                                <View
+                                    style={{
+                                        padding: 15,
+                                        marginTop: 20,
+                                        borderWidth: 1,
+                                        borderColor: 'grey',
+                                        borderRadius: 5,
+                                        // height: "33%"
+                                        // backgroundColor: "red"
+                                    }}>
+                                    <ScrollView>
+                                        {
+                                            inventoryItemsQty && inventoryItemsQty.map((key, index) => {
+                                                return (
+                                                    <View key={index} style={{ display: 'flex', flexDirection: "row", marginTop: 10, top: -10 }}>
+                                                        <View style={{ flex: 3, justifyContent: "center", }}>
+                                                            <View style={{ borderWidth: 0.5, borderColor: 'grey', borderRadius: 5 }}>
+                                                                <Picker
+                                                                    mode="dropdown"
+                                                                    selectedValue={this.state[`selectedProduct${index}`]}
+                                                                    style={{
+                                                                        fontWeight: "bold",
+                                                                        color: "grey",
+                                                                        width: "100%",
+                                                                    }}
+                                                                    onValueChange={(itemValue, itemIndex) => this.setSelectedValue(itemValue, index)}
+                                                                >
+                                                                    <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Products"} value={""} />
 
+                                                                    {
+                                                                        productsName.map((key, index) => {
+                                                                            return (
+                                                                                <Items style={{ fontSize: 12, fontWeight: "bold" }} label={key.productName} value={key.productName} key={index} />
+                                                                            )
+                                                                        })
+                                                                    }
 
-                                        </View>
-                                        <View style={{ flex: 1, }}>
-                                            <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green' }}>
-                                                <Text style={{ textAlign: 'center', padding: 10, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
+                                                                </Picker>
+                                                            </View>
+                                                        </View>
+                                                        <View style={{
+                                                            flex: 1,
+                                                            justifyContent: "center",
+                                                            marginLeft: "2%",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            borderWidth: 1,
+                                                            borderColor: "grey",
+                                                            borderRadius: 5,
+                                                        }}>
+                                                            <TextInput
+                                                                editable={this.state[`selectedProduct${index}`] ? true : false}
+                                                                keyboardType={"numeric"}
+                                                                placeholder={"Waight"}
+                                                                placeholderTextColor='grey'
+                                                                style={{
+                                                                    fontSize: 15,
+                                                                    height: 50,
+                                                                    width: "100%",
+                                                                    fontWeight: "bold",
+                                                                    marginLeft: "15%",
+                                                                    color: "grey",
+                                                                }}
+                                                                onChangeText={(text) => { this.calculateRateAmount(text, index) }}
+                                                                value={this.state[`weight${index}`]}
+                                                                onBlur={() => { this.createProductObject(index) }}
+                                                            />
+                                                        </View>
+                                                        <View style={{
+                                                            flex: 1,
+                                                            justifyContent: "center",
+                                                            marginLeft: "2%",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            borderWidth: 1,
+                                                            borderColor: "grey",
+                                                            borderRadius: 5,
+                                                            // backgroundColor: "blue"
+                                                        }}>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 15,
+                                                                    width: "100%",
+                                                                    fontWeight: "bold",
+                                                                    marginLeft: "15%",
+                                                                    color: "grey"
+                                                                }}
+                                                            >
+                                                                {this.state[`rate${index}`] ? this.state[`rate${index}`] : "Rate"}
+                                                            </Text>
+
+                                                            {/* <TextInput
+                                                            editable={false}
+                                                            keyboardType={"numeric"}
+                                                            placeholder={"Rate"}
+                                                            placeholderTextColor='grey'
+                                                            style={{
+                                                                fontSize: 15,
+                                                                height: 50,
+                                                                width: "100%",
+                                                                fontWeight: "bold",
+                                                                marginLeft: "15%"
+                                                            }}
+                                                            // onChangeText={(text) => { this.setState({ [`rate${index}`]: text }) }}
+                                                            value={this.state[`rate${index}`]}
+                                                        /> */}
+                                                        </View>
+
+                                                        <View style={{
+                                                            flex: 1,
+                                                            justifyContent: "center",
+                                                            marginLeft: "2%",
+                                                            justifyContent: "center",
+                                                            alignItems: "center",
+                                                            borderWidth: 1,
+                                                            borderColor: "grey",
+                                                            borderRadius: 5,
+                                                        }}>
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 15,
+                                                                    width: "100%",
+                                                                    fontWeight: "bold",
+                                                                    marginLeft: "15%",
+                                                                    color: "grey"
+                                                                }}
+                                                            >
+                                                                {this.state[`amount${index}`] ? this.state[`amount${index}`] : "Amount"}
+                                                            </Text>
+
+                                                            {/* <TextInput
+                                                            keyboardType={"numeric"}
+                                                            placeholder={"Amount"}
+                                                            placeholderTextColor='grey'
+                                                            style={{
+                                                                fontSize: 15,
+                                                                height: 50,
+                                                                width: "100%",
+                                                                fontWeight: "bold",
+                                                                marginLeft: "15%"
+                                                            }}
+                                                            // onChangeText={(text) => { this.setState({ [`amount${index}`]: text }) }}
+                                                            value={this.state[`amount${0}`]}
+                                                        /> */}
+                                                        </View>
+
+                                                        <TouchableOpacity
+                                                            style={{
+                                                                flex: 0.5,
+                                                                borderRadius: 5,
+                                                                justifyContent: "center",
+                                                                alignItems: "center",
+                                                                marginLeft: "2%",
+                                                                borderColor: "red",
+                                                                borderWidth: 1
+                                                                // backgroundColor: 'red',
+                                                            }}
+                                                            onPress={() => { this.delExtraField(index) }}
+                                                        >
+                                                            <AntDesign name="delete" style={{ color: 'red', fontWeight: 'bold', fontSize: 20, }} />
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                )
+                                            })
+                                        }
+                                    </ScrollView>
+
+                                    <View style={{ marginTop: 0, justifyContent: "center", }}>
+                                        <TouchableOpacity activeOpacity={0.7}
+                                            onPress={() => { this.addExtraField() }}
+                                        >
+                                            <View style={{ backgroundColor: '#003366', borderRadius: 5, width: 150, paddingVertical: 5, flexDirection: 'row', alignItems: "center", justifyContent: "center", }}>
+                                                <Text style={{ fontSize: 30, marginRight: 10, color: "#fff" }}>+</Text>
+                                                <Text style={{ fontWeight: 'bold', color: '#fff', }}>Add Product</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                </View>
+
+                                <View style={{ flexDirection: "row", marginTop: 10, width: "100%", }}>
+                                    <View style={{ width: "50%", flex: 1, justifyContent: "flex-end", }}>
+                                        <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", }}>
+
+                                            <TouchableOpacity style={{
+                                                width: "30%",
+                                                height: 50,
+                                                borderRadius: 5,
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                marginTop: 5,
+                                                backgroundColor: '#003366',
+                                            }}
+                                                onPress={() => { this.saveInventory() }}
+                                            >
+                                                <Text style={{
+                                                    fontSize: 14,
+                                                    fontWeight: "bold",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    color: "white"
+                                                }}>
+                                                    Save
+                                            </Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                style={{
+                                                    width: "30%",
+                                                    height: 50,
+                                                    borderRadius: 5,
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    marginTop: 5,
+                                                    backgroundColor: '#003366',
+                                                    marginLeft: "2%"
+                                                }}
+                                                onPress={() => { this.deleteInventory() }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 14,
+                                                        fontWeight: "bold",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        color: "white"
+                                                    }}
+                                                >
+                                                    Delete
+                                                </Text>
+                                            </TouchableOpacity>
+
+                                            <TouchableOpacity
+                                                style={{
+                                                    width: "30%",
+                                                    height: 50,
+                                                    borderRadius: 5,
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    marginTop: 5,
+                                                    backgroundColor: '#003366',
+                                                    marginLeft: "2%"
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 14,
+                                                        fontWeight: "bold",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        color: "white"
+                                                    }}
+                                                >
+                                                    Print
+                                                </Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>
+                                    <View style={{ width: "40%", justifyContent: "center", }}>
+                                        <View style={{}}>
+                                            <Text style={{ marginBottom: 5, fontSize: 16, fontWeight: "bold", }}>Total Amount</Text>
+                                            <View
+                                                style={{
+                                                    width: "100%",
+                                                    height: 50,
+                                                    borderWidth: 1,
+                                                    borderColor: "grey",
+                                                    borderRadius: 5,
+                                                    justifyContent: "center",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 16,
+                                                        width: "100%",
+                                                        marginLeft: "5%",
+                                                        color: "black",
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    {totalAmount ? totalAmount : "Total Amount"}
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={{}}>
+                                            <Text style={{ marginBottom: 5, marginTop: 5, fontSize: 16, fontWeight: "bold", }}>Advance Detection</Text>
+                                            <View style={{
+                                                width: "100%",
+                                                borderWidth: 1,
+                                                borderColor: "grey",
+                                                borderRadius: 5,
+                                                // marginTop: 5,
+                                            }}>
+                                                <TextInput
+                                                    keyboardType={"numeric"}
+                                                    placeholder={"Advance Detection"}
+                                                    placeholderTextColor='black'
+                                                    style={{
+                                                        fontSize: 14,
+                                                        width: "100%",
+                                                        fontWeight: "bold",
+                                                        marginLeft: "5%",
+                                                        color: "black",
+                                                    }}
+                                                    onChangeText={(text) => { this.advanceDetection(text) }}
+                                                    value={this.state.advanceDetection}
+                                                />
+                                            </View>
+                                        </View>
 
-                                    <View style={{ padding: 8, borderWidth: 0.5, borderColor: 'grey', borderRadius: 5 }}>
+                                        <View style={{}}>
+                                            <Text style={{ marginBottom: 5, marginTop: 5, fontSize: 16, fontWeight: "bold", }}>Loan Detection</Text>
+                                            <View style={{
+                                                width: "100%",
+                                                borderWidth: 1,
+                                                borderColor: "grey",
+                                                borderRadius: 5,
+                                                // marginTop: 5,
+                                            }}>
+                                                <TextInput
+                                                    keyboardType={"numeric"}
+                                                    placeholder={"Loan Detection"}
+                                                    placeholderTextColor='black'
+                                                    style={{
+                                                        fontSize: 14,
+                                                        width: "100%",
+                                                        marginLeft: "5%",
+                                                        color: "black",
+                                                        fontWeight: "bold",
 
+                                                    }}
+                                                    onChangeText={(text) => { this.loanDetection(text) }}
+                                                    value={this.state.loanDetection}
+                                                />
+                                            </View>
+                                        </View>
+
+
+                                        <View style={{}}>
+                                            <Text style={{ marginBottom: 5, marginTop: 5, fontSize: 16, fontWeight: "bold", }}>Final Amount</Text>
+                                            <View
+                                                style={{
+                                                    width: "100%",
+                                                    height: 50,
+                                                    borderWidth: 1,
+                                                    borderColor: "grey",
+                                                    borderRadius: 5,
+                                                    justifyContent: "center",
+                                                }}
+                                            >
+                                                <Text
+                                                    style={{
+                                                        fontSize: 16,
+                                                        width: "100%",
+                                                        marginLeft: "5%",
+                                                        color: "black",
+                                                        fontWeight: "bold",
+                                                    }}
+                                                >
+                                                    {finalAmount ? finalAmount : "Final Amount"}
+                                                </Text>
+                                            </View>
+                                        </View>
+
+                                        {/* <View style={{
+                                        width: "100%",
+                                        height: 50,
+                                        borderWidth: 1,
+                                        borderColor: "grey",
+                                        borderRadius: 5,
+                                        justifyContent: "center",
+                                        marginTop: 5,
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 14,
+                                            width: "100%",
+                                            fontWeight: "bold",
+                                            marginLeft: "5%",
+                                            color: "grey"
+                                        }}>
+                                            {finalAmount ? finalAmount : "Final Amount"}
+                                        </Text>
+                                    </View> */}
+
+                                    </View>
+                                </View>
+                            </View>
+
+                            <View style={styles.sideContent}>
+                                <View style={{ height: 100, borderBottomColor: "white", borderBottomWidth: 0.5, justifyContent: "center", alignItems: "center", }}>
+                                    <View style={{ flexDirection: "row", width: "100%", }}>
                                         <DatePicker
-
-                                            placeHolderText='Date'
-                                            placeHolderTextStyle={{ color: 'grey', fontWeight: 'bold', }}
-                                            onDateChange={(date) => this.setState({ date })}
+                                            showIcon={false}
+                                            style={{ width: "100%" }}
+                                            date={inventoryListTime}
+                                            mode="date"
+                                            is24Hour={false}
+                                            placeholder="DATE"
+                                            format="YYYY-MM-DD"
+                                            confirmBtnText="Confirm"
+                                            cancelBtnText="Cancel"
+                                            customStyles={{
+                                                placeholderText: {
+                                                    color: "white",
+                                                    fontSize: 17,
+                                                    fontWeight: "bold",
+                                                },
+                                                dateInput: {
+                                                    height: 52,
+                                                    borderLeftWidth: 0,
+                                                    borderRightWidth: 0,
+                                                    borderTopWidth: 0,
+                                                    borderBottomWidth: 0,
+                                                    fontWeight: "bold",
+                                                    color: "white",
+                                                },
+                                                dateText: {
+                                                    color: "white",
+                                                    fontWeight: "bold",
+                                                }
+                                            }}
+                                            onDateChange={(date) => this.setInventoryListDate(date)}
                                         />
+                                        <Fontisto style={{ color: "white", left: "-90%", top: 12 }} size={16} name={"date"} />
                                     </View>
-                                    <View style={{ padding: 8, marginTop: '1.5%', borderWidth: 0.5, borderColor: 'grey', borderRadius: 5 }}>
-                                        <TextInput
-                                            placeholder={"Employee Name"}
-                                            placeholderTextColor='grey'
-                                            style={{ fontSize: 16, fontWeight: "bold" }}
-                                            onChangeText={(text) => { this.setState({ name: text }) }}
-                                            value={this.state.name}
-                                        />
-                                    </View>
+                                    <Text style={{ color: "#fff", fontWeight: '700', letterSpacing: 1, fontSize: 17, marginTop: 10 }}>Inventory's List</Text>
+                                </View>
 
-                                    <View style={{ padding: 10, marginTop: 20, borderWidth: 1, borderColor: 'grey', borderRadius: 5 }}>
-                                        <View style={{ display: 'flex', flexDirection: "row", marginTop: 10 }}>
+                                <View style={{ flex: 8, }}>
 
-                                            <View style={{ flex: 3, padding: 5, }}>
-                                                <Text style={{ color: 'grey', fontWeight: 'bold' }}>Products Name</Text>
-                                                <TextInput
-                                                    placeholder={""}
-                                                    placeholderTextColor='grey'
-                                                    style={{ fontSize: 15, height: 40, marginTop: "3%", fontWeight: "bold", borderWidth: 1, borderColor: "grey" }}
-                                                    onChangeText={(text) => { this.setState({ productName: text }) }}
-                                                    value={this.state.productName}
-                                                />
-                                            </View>
+                                    {
+                                        inventoryList.map((key, index) => {
+                                            return (
+                                                <TouchableOpacity style={{ height: 40, justifyContent: "center", marginTop: 10, backgroundColor: "#063767" }}
+                                                    onPress={() => { this.setAndSaveInventory(key, index) }}
+                                                >
+                                                    <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>{key.employeeName}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })
+                                    }
 
-                                            <View style={{ flex: 1, padding: 5, }}>
-                                                <Text style={{ color: 'grey', fontWeight: 'bold' }}>Weight</Text>
-                                                <TextInput
-                                                    placeholder={""}
-                                                    placeholderTextColor='grey'
-                                                    style={{ fontSize: 15, height: 40, marginTop: "8%", fontWeight: "bold", borderWidth: 1, borderColor: "grey" }}
-                                                    onChangeText={(text) => { this.setState({ weight: text }) }}
-                                                    value={this.state.weight}
-                                                />
-                                            </View>
-                                            <View style={{ flex: 1, padding: 5, }}>
-                                                <Text style={{ color: 'grey', fontWeight: 'bold' }}>Rate</Text>
-                                                <TextInput
-                                                    placeholder={""}
-                                                    placeholderTextColor='grey'
-                                                    style={{ fontSize: 15, height: 40, marginTop: "8%", fontWeight: "bold", borderWidth: 1, borderColor: "grey" }}
-                                                    onChangeText={(text) => { this.setState({ rate: text }) }}
-                                                    value={this.state.rate}
-                                                />
-                                            </View>
-                                            <View style={{ flex: 1, padding: 5, }}>
-                                                <Text style={{ color: 'grey', fontWeight: 'bold' }}>Amount</Text>
-                                                <TextInput
-                                                    placeholder={""}
-                                                    placeholderTextColor='grey'
-                                                    style={{ fontSize: 15, height: 40, marginTop: "8%", fontWeight: "bold", borderWidth: 1, borderColor: "grey" }}
-                                                    onChangeText={(text) => { this.setState({ amount: text }) }}
-                                                    value={this.state.amount}
-                                                />
-                                            </View>
-                                            <View style={{ flex: 1, padding: 5, }}>
-                                                <Text style={{ color: 'grey', fontWeight: 'bold' }}>Action</Text>
-                                                <View style={{ height: 45, width: 40, alignItems: "center", justifyContent: "center" }}>
+                                    {/* <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>There is no inventory</Text> */}
+                                </View>
 
-                                                    <AntDesign name='closecircleo' color="#003366" size={30} />
-                                                </View>
-
-
-                                            </View>
-                                        </View>
-                                        <View style={{ marginTop: 10, alignItems: "center", justifyContent: "center", }}>
-                                            <TouchableOpacity activeOpacity={0.7}>
-                                                <View style={{ backgroundColor: '#003366', borderRadius: 5, width: 150, paddingVertical: 5, display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: "center", }}>
-                                                    <Text style={{ fontSize: 30, marginRight: 10, color: "#fff" }}>+</Text>
-                                                    <Text style={{ fontWeight: 'bold', color: '#fff', }}>Add Product</Text>
-                                                </View>
-                                            </TouchableOpacity>
-
-                                        </View>
-
-                                    </View>
-
-
-
-                                    <View style={{ marginTop: "7%", display: 'flex', flexDirection: "row", justifyContent: "center", }}>
-                                        <View>
-                                            <Text style={styles.amountText}>Total Amount :</Text>
-                                            <Text style={styles.amountText}>Advance Detection :</Text>
-                                            <Text style={styles.amountText}>Loan Detection :</Text>
-                                            <Text style={styles.amountText}>Final Amount :</Text>
-
-
-                                        </View>
-                                        <View>
-                                            <Text style={{ marginTop: 15, fontSize: 17, fontWeight: '700', color: 'grey' }}>900</Text>
-                                            <Text style={{ marginTop: 15, fontSize: 17, fontWeight: '700', color: 'grey' }}>900</Text>
-                                            <Text style={{ marginTop: 15, fontSize: 17, fontWeight: '700', color: 'grey' }}>900</Text>
-                                            <Text style={{ marginTop: 15, fontSize: 17, fontWeight: '700', color: 'grey' }}>900</Text>
-
-
-                                        </View>
+                                <View style={{ height: 100, justifyContent: "center", alignItems: "center", backgroundColor: "#063767", }}>
+                                    <View style={{ width: "80%", }}>
+                                        <Text style={{ color: '#fff', fontWeight: '700', textDecorationLine: 'underline', }}>Today's Total Amount</Text>
+                                        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 24, textDecorationLine: 'underline', }}>{todaytotalAmount ? todaytotalAmount : 0} Rs</Text>
                                     </View>
                                 </View>
 
-                                <View style={styles.sideContent}>
-
-                                    <Text style={{ padding: 5, paddingVertical: 10, color: "#fff", fontWeight: '700', letterSpacing: 1, fontSize: 17, borderBottomWidth: 1, borderColor: '#fff' }}>Today's Inventory</Text>
-                                    <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>Employee 1 Inventory</Text>
-                                    <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>Employee 2 Inventory</Text>
-
+                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", }}>
+                                    <TouchableOpacity style={{
+                                        width: "90%",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        borderRadius: 5,
+                                        backgroundColor: "red",
+                                    }}>
+                                        <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>New Inventory</Text>
+                                    </TouchableOpacity>
                                 </View>
+
+                                {/* <Text style={{ padding: 5, paddingVertical: 10, color: "#fff", fontWeight: '700', letterSpacing: 1, fontSize: 17, borderBottomWidth: 1, borderColor: '#fff' }}>Today's Inventory</Text>
+                                <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>Employee 1 Inventory</Text>
+                                <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>Employee 2 Inventory</Text> */}
                             </View>
                         </View>
                     </ScrollView>
                 </View>
-            </AppContainer>
+            </AppContainer >
         )
     }
 }
+
+let mapStateToProps = state => {
+    return {
+        employee: state.root.employee,
+        productsList: state.root.productsList,
+        inventoryList: state.root.inventoryList,
+    };
+};
+function mapDispatchToProps(dispatch) {
+    return ({
+        saveInventorys: (data) => {
+            dispatch(saveInventorys(data))
+        },
+        deleteInventory: (key) => {
+            dispatch(deleteInventory(key))
+        },
+    })
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AddInventory);
 
 const styles = StyleSheet.create({
     container: {},
@@ -192,14 +909,10 @@ const styles = StyleSheet.create({
     },
     mainView: {
         flexDirection: "row",
-        // height: "75%",
         display: 'flex',
         width: '90%',
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        // borderWidth: 1,
-        // borderColor: 'green'
-
+        marginTop: "1%",
+        // backgroundColor: "blue"
     },
     addInventory: {
         display: 'flex',
@@ -234,12 +947,9 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: "4%",
         borderRadius: 5,
-        // borderWidth: 2,
-        // borderColor:'#003366',
         backgroundColor: '#003366',
-        height: 500,
+        // height: 500,
     }
 })
 
 
-// export default Home

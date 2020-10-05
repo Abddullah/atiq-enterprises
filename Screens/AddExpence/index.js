@@ -1,459 +1,597 @@
 import React, { Component } from 'react'
-import {
-    Image, Dimensions, Keyboard, StyleSheet, Text, SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder, TouchableOpacity, ScrollView
-} from 'react-native'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import { setDataReducer } from "../../store/action/action";
-
-import FootersTabs from '../../component/footer'
+import { Dimensions, StyleSheet, Text, Alert, TextInput, View, TouchableOpacity, ScrollView, Picker, Items } from 'react-native'
+import DatePicker from 'react-native-datepicker'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+// components
 import AppContainer from '../../component/AppContainer'
-import InventoryForm from '../../component/inventoryForm'
-import Logo from '../../component/logo'
-import { DatePicker } from 'native-base'
-import AddExpenseSchema from '../../realm/Schema'
-// import axios from 'axios';
+// moment for time converting
+import moment from 'moment';
+// vector icons
+import Fontisto from 'react-native-vector-icons/Fontisto'
+// store
+import { connect } from "react-redux";
+import { addExpense, deleteExpense, updateExpense } from '../../store/action/action';
 
-const Realm = require('realm');
-
-// import { connectRealm } from 'react-native-realm';
-// const screenWidth = Dimensions.get('screen').width
-// const screenHeight = Dimensions.get('screen').height
-
-export default class AddExpense extends React.Component {
+class AddExpense extends Component {
     constructor() {
         super()
         this.state = {
-            date: 'xxxxx',
-            expense: '',
-            amount: '',
-            getData: {
-                // url: `${BASE_URL}/app/get/tabs`,
-                // method: 'GET',
-                reducerState: 'TESING'
-            },
+            update: false,
+            dateAndTime: "",
+            expense: "",
+            amount: "",
+            ddSelectedValue: "",
+            dateFrom: "",
+            dateTo: "",
+            // ddSelectedValue: "Tea",
+            // dateFrom: "2020-09-29",
+            // dateTo: "2020-09-30",
         }
     }
 
-
-    UNSAFE_componentWillReceiveProps(props) {
-        const { testing } = props
-        console.log(testing, 'tesing')
+    UNSAFE_componentWillMount() {
+        let { expenseList } = this.props
+        let expenseNames = []
+        for (let index = 0; index < expenseList.length; index++) {
+            const element = expenseList[index];
+            const names = element.expense
+            if (expenseNames.indexOf(names) !== -1) {
+                console.log("Value exists!")
+            } else {
+                expenseNames.push(names)
+            }
+        }
+        this.setState({
+            expenseNames: expenseNames,
+            expenseList: expenseList
+        })
     }
 
-    componentDidMount() {
-        Realm.open({ schema: [AddExpenseSchema] })
-            .then(realm => {
-                realm.write(() => {
-                    // realm.create('AddExpense', {
-                    //     date: '22-07-2020',
-                    //     expense: 'expense',
-                    //     amount: '1200',
-                    //     // database : false
-                    // });
-                    const addExpenseData = realm.objects('Testing')
-                    // let data = JSON.stringify(addExpenseData)
-                    // var myJSON = JSON.stringify(addExpenseData);
-                    let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-                    console.log(myJSON, 'addExpenseData')
-                    //   myCar.miles += 20; // Update a property value
-                });
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        let { expenseList } = nextProps
+        console.log(expenseList, "Products_List_will_receive_props")
+        let expenseNames = []
+        for (let index = 0; index < expenseList.length; index++) {
+            const element = expenseList[index];
+            const names = element.expense
+            if (expenseNames.indexOf(names) !== -1) {
+                console.log("Value exists!")
+            } else {
+                expenseNames.push(names)
+            }
+        }
+        this.setState({
+            expenseNames: expenseNames,
+            expenseList: expenseList
+        })
 
+    }
+
+    setDateAndTime(date, time) {
+        this.setState({
+            dateAndTime: date
+        })
+    }
+
+    setSelectedValue(itemValue, itemIndex) {
+        this.setState({
+            ddSelectedValue: itemValue,
+        })
+    }
+
+    setDateFrom(date) {
+        this.setState({ dateFrom: date })
+    }
+
+    setDateTo(dateTo) {
+        const { dateFrom } = this.state
+        var dateFromInMiliseconds = moment(dateFrom).format("x");
+        var dateToInMiliseconds = moment(dateTo).format("x");
+        if (dateFromInMiliseconds < dateToInMiliseconds) {
+            this.setState({ dateTo: dateTo })
+        }
+        else {
+            Alert.alert("Date cannot be before start date")
+        }
+    }
+
+    saveProduct() {
+        let { dateAndTime, expense, amount } = this.state
+        var dateMiliSecond = moment(dateAndTime).format("x");
+
+        if (dateMiliSecond != "" && expense != "" && amount != "") {
+            let cloneData = {
+                dateAndTime: dateMiliSecond,
+                expense: expense,
+                amount: amount,
+                id: parseInt(Date.now() + amount)
+            }
+            this.props.addExpense(cloneData)
+            this.setState({
+                dateAndTime: "",
+                expense: "",
+                amount: "",
+                soortedList: [],
             })
-            .catch(function (error) {
-                console.log(error, 'errodddddddr');
-            });
-    }
-
-
-
-    requestAPI = async (obj) => {
-        let options = {
-            url: obj.url,
-            method: obj.method,
-            headers: {
-                'content-type': 'application/json'
-            },
         }
-        if (obj.data) options.data = obj.data
-        return await axios(options)
-            .then(res => res)
-            .catch(err => err)
+        else {
+            Alert.alert("All fields are required")
+        }
     }
 
-
-    save() {
-        //ADD__DATA
-        // Realm.open({ schema: [AddExpenseSchema] })
-        //     .then(realm => {
-        //         realm.write(() => {
-        //             realm.create('Testing', {
-        //                 id: 3,
-        //                 date: '22-07-2020',
-        //                 expense: 'expense2',
-        //                 amount: '1200',
-        //             });
-        //             const addExpenseData = realm.objects('Testing')
-        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-        //             console.log(myJSON, 'addExpenseData')
-        //         });
-        //         realm.close();
-        //     })
-        //     .catch(error => {
-        //         console.log(error, 'error');
-        //     });
-
-        // EDIT******************
-        // Realm.open({ schema: [AddExpenseSchema,] })
-        //     .then(realm => {
-        //         realm.write(() => {
-        //             realm.create('Testing', { id: 2, amount: '2000' }, 'modified')
-
-
-        //             const addExpenseData = realm.objects('Testing')
-        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-        //             console.log(myJSON, 'addExpenseData')
-
-        //         })
-
-        //     })
-
-        // delete
-        // Realm.open({ schema: [AddExpenseSchema,] })
-        //     .then(realm => {
-        //         realm.write(() => {
-
-        //             // ALL_OBJECTS_DELETE
-        //             // const deleteObject = realm.objects('Testing');
-        //             // realm.delete(deleteObject);
-
-        //             // ONE_OBJECT_DELETE BY ID
-        //             const deleteById = realm.objectForPrimaryKey('Testing', 2);
-        //             realm.delete(deleteById);
-
-
-        //             const addExpenseData = realm.objects('Testing')
-        //             let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-        //             console.log(myJSON, 'addExpenseData')
-
-        //         })
-
-        //     })
-
-
-        // read file
-        // Realm.open({ schema: [AddExpenseSchema] })
-        //     .then(realm => {
-        //         realm.write(() => {
-
-        //             // ALL_OBJECTS_GET
-
-        //             const get = realm.objects('Testing')
-        //             let getAllObjects = JSON.parse(JSON.stringify(get))
-        //             console.log(getAllObjects, 'getAllObjects')
-
-        //             // ONE_OBJECT_GET BY ID
-
-        //             const get = realm.objectForPrimaryKey('Testing', 2);
-        //             // let getObjectByID = JSON.parse(JSON.stringify(get))
-        //             // console.log(getObjectByID, 'getObjectByID')
-
-        //         });
-        //         realm.close();
-        //     })
-        //     .catch(error => {
-        //         console.log(error, 'error');
-        //     })
+    update(key) {
+        let { dateAndTime, expense, amount, updateItem } = this.state
+        var key = updateItem.id
+        var dateMiliSecond = moment(dateAndTime).format("x");
+        if (dateMiliSecond != "" && expense != "" && amount != "") {
+            let updatedObj = {
+                dateAndTime: dateMiliSecond,
+                expense: expense,
+                amount: amount,
+            }
+            this.props.updateExpense(key, updatedObj)
+            this.setState({
+                update: false,
+                ddSelectedValue: '',
+                dateAndTime: "",
+                expense: "",
+                amount: "",
+                soortedList: [],
+            })
+        }
+        else {
+            Alert.alert("All fields are required")
+        }
     }
 
-
-
-    ///////////////////REALM////////////////////////
-
-    // const { actions } = this.props
-
-    // actions.setDataReducer(getData.reducerState, 'response_data')
-
-    // let addToPinWithType = {
-    //     name: 'selectType',
-    // }
-
-    // let obj = {
-    //     url: `http://192.168.1.113:3002/app/tabs`,
-    //     method: 'POST',
-    //     data: addToPinWithType
-    // }
-
-    // this.requestAPI(obj).then((response) => {
-    //     // console.log(response, 'response****()');
-    //     console.log(response, 'response')
-    // })
-
-
-
-
-
-
-    // Realm.open({ schema: [AddExpenseSchema,] })
-    //     .then(realm => {
-    //         realm.write(() => {
-
-    // let Expense = realm.objects('Testing',
-    //     // {
-    //     //     id: 2,
-    //     //     date: "22-07-2020",
-    //     //     expense: "expednse",
-    //     //     amount: "1500"
-    //     // }
-
-    //     );
-    //   delete   const Expense = realm.objectForPrimaryKey('Testing', 2);
-    //   edit  realm.create('Testing', {id: 1, amount: '2222'}, 'modified')
-
-    // Delete the Expense
-    // let myJSON = JSON.parse(JSON.stringify(Expense))
-    // console.log(myJSON[1], 'addExpenseData')
-    // realm.delete(Expense);
-    // console.log(Expense, 'Expense')
-
-
-
-
-    // const addExpenseData = realm.objects('Testing')
-    // // let data = JSON.stringify(addExpenseData)
-    // // var myJSON = JSON.stringify(addExpenseData);
-    // let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-    // console.log(myJSON, 'addExpenseData')
-
-    // let allBooks = realm.objects('addExpenseData');
-    // realm.delete(allBooks); // Deletes all books
-    //     });
-    // })
-    // .catch(error => {
-    //     console.log(error, 'error');
-    // });
-
-
-    // const { date, expense, amount } = this.state
-    // if (expense == '' || amount == '') {
-    //     alert('All field are require')
-    // }
-    // else {
-    // const AddExpenseSchema = {
-    //     name: 'Testing',
-    //     primaryKey: 'id',
-    //     properties: {
-    //         id: 'int',
-    //         date: 'string',
-    //         expense: 'string',
-    //         amount: 'string',
-    //         // database: 'boolean'
-    //     }
-    // };
-    // Realm.open({ schema: [AddExpenseSchema] })
-    //     .then(realm => {
-    //         realm.write(() => {
-    //             realm.create('Testing', {
-    //                 id: 2,
-    //                 date: '22-07-2020',
-    //                 expense: 'expednse',
-    //                 amount: '1500',
-    //                 // database : false
-    //             });
-    //             const addExpenseData = realm.objects('Testing')
-    //             var myJSON = JSON.stringify(addExpenseData);
-    //             console.log(myJSON, 'addExpenseData')
-    //             //   myCar.miles += 20; // Update a property value
-    //         });
-    //         realm.close();
-    //     })
-    //     .catch(error => {
-    //         console.log(error, 'error');
-    //     });
-    // UpdatedExpenseSchema
-    // }
-
-
-    delete() {
-        const { getData } = this.state
-
+    delete(key, index) {
+        const { soortedList } = this.state
+        this.props.deleteExpense(key)
+        soortedList.splice(index, 1,)
     }
 
-    // save() {
-
-    // }
+    search() {
+        const { dateFrom, dateTo, ddSelectedValue } = this.state
+        const { expenseList } = this.props
+        let convertDateFrom = moment(dateFrom).format("x");
+        let convertDateTo = moment(dateTo).format("x");
+        let specificProduct = expenseList.filter(function (e) {
+            return e.expense === ddSelectedValue;
+        });
+        let soortedList = []
+        if (specificProduct && specificProduct.length) {
+            specificProduct.map((key, index) => {
+                if (convertDateFrom <= Number(key.dateAndTime) && convertDateTo >= Number(key.dateAndTime)) {
+                    soortedList.push(key)
+                }
+            })
+            let decendingOrderSorting = soortedList.sort((a, b) => b.dateAndTime - a.dateAndTime)
+            console.log(decendingOrderSorting, "decendingOrderSorting")
+            this.setState({ soortedList })
+        }
+    }
 
     render() {
-        // <PeopleList people={this.props.people} />
-
-        console.log(this.props.results, 'resultsresults')
+        const {
+            dateAndTime, expense, amount,
+            expenseNames,
+            ddSelectedValue,
+            dateFrom, dateTo, update,
+            soortedList,
+        } = this.state
         var { height, width } = Dimensions.get('window');
+
         return (
-            <AppContainer pageName={'Add Expense'} navigation={this.props.navigation} >
+            <AppContainer pageName={'Expenses'} navigation={this.props.navigation} >
                 <View style={{ flex: 1 }} >
-                    {/* <View style={{ flex: 1, }}>
-                <View style={{ padding: 20, height: height * 0.155, borderBottomWidth: 0.5, borderColor: '#003366', display: 'flex', flexDirection: 'row', }}>
-                    <View style={{ flex: 1 }}>
-                        <Logo />
+                    <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
 
-                    </View>
-                    <View style={{ flex: 9, justifyContent: 'center' }}>
-                        <Text style={[styles.addExpenseText, { fontSize: 25, textAlign: 'center' }]}>Add Expense</Text>
-
-                    </View>
-                </View> */}
-                    <ScrollView style={{ flex: 1 }}>
-                        <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
-                            <View style={styles.mainView}>
-
-                                <View style={styles.addExpenseForm}>
-
-                                    <View style={styles.expenseForm}>
-
-                                        <View style={styles.dateTime}>
-                                            <DatePicker
-
-                                                textStyle={'grey'}
-                                                placeHolderText='Date & Time'
-                                                placeHolderTextStyle={{ color: 'grey', fontWeight: 'bold', marginTop: -8 }}
-                                                onDateChange={(date) => this.setState({ date })}
+                        <View style={styles.mainView}>
+                            <View style={styles.addExpenseForm}>
+                                <View style={styles.expenseForm}>
+                                    <View style={styles.dateTime}>
+                                        <View style={{ flexDirection: "row", width: "100%", }}>
+                                            <DatePicker showIcon={false}
+                                                style={{ width: "100%" }}
+                                                date={dateAndTime}
+                                                mode="datetime"
+                                                is24Hour={false}
+                                                placeholder="Date & Time"
+                                                format="YYYY-MM-DD hh:mm"
+                                                confirmBtnText="Confirm"
+                                                cancelBtnText="Cancel"
+                                                customStyles={{
+                                                    placeholderText: {
+                                                        color: "grey",
+                                                        fontSize: 17,
+                                                        fontWeight: "bold",
+                                                        marginRight: "55%",
+                                                    },
+                                                    dateInput: {
+                                                        height: 52,
+                                                        borderLeftWidth: 0,
+                                                        borderRightWidth: 0,
+                                                        borderTopWidth: 0,
+                                                        borderBottomWidth: 0,
+                                                        // marginRight: "55%",
+                                                        // marginLeft: "5%",
+                                                        fontWeight: "bold",
+                                                    },
+                                                    // ... You can check the source to find the other keys.
+                                                }}
+                                                onDateChange={(dateAndTime, time) => this.setDateAndTime(dateAndTime, time)}
                                             />
+                                            <Fontisto style={{ color: "#4B534F", left: "-90%", top: 12 }} size={16} name={"date"} />
                                         </View>
-                                        <View style={styles.dateTime}>
-                                            <TextInput
-                                                placeholder={"Expense"}
-                                                placeholderStyle={styles.text}
-                                                style={styles.input}
-                                                onChangeText={(text) => { this.setState({ expense: text }) }}
-                                                value={this.state.expense}
-                                            />
-                                        </View>
-                                        <View style={styles.amount}>
-                                            <TextInput
-                                                placeholder={"Amount"}
-                                                placeholderStyle={styles.text}
-                                                style={styles.input}
-                                                onChangeText={(text) => { this.setState({ amount: text }) }}
-                                                value={this.state.amount}
-                                            />
-                                        </View>
-                                        <TouchableOpacity style={styles.saveBtn} onPress={() => this.save()}>
-                                            <Text style={styles.saveBtnText}>Save</Text>
-                                        </TouchableOpacity>
                                     </View>
 
-                                    <View style={{ width: "100%", alignItems: 'center' }}>
-
-                                        <View style={{ width: "100%", }}>
-                                            <Text style={styles.searchByText}>Search by Date (Expense)</Text>
-
-                                            <View style={styles.searchByView}>
-                                                <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
-                                                    <Text style={styles.dateFromText}>Expense</Text>
-                                                </View>
-                                                <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
-                                                    <Text style={styles.dateFromText}>Date From</Text>
-                                                </View>
-                                                <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
-                                                    <Text style={styles.dateFromText}>Date To</Text>
-                                                </View>
-
-                                                <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#003366', padding: "2%", flex: 0.5 }}>
-                                                    <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff', fontSize: 16 }}>Search</Text>
-                                                </TouchableOpacity>
-                                            </View>
-
-                                            <Text style={styles.searchDateText}>Search by Date</Text>
-                                            <Text style={styles.productNameText}>Product Name</Text>
-
-
-
-                                            <View style={styles.employeeView}>
-                                                <View style={{ width: '30%', padding: "2%" }}>
-                                                    <Text style={styles.text}>Date</Text>
-                                                </View>
-                                                <View style={{ width: '30%', padding: "2%" }}>
-                                                    <Text style={styles.text}>Rate</Text>
-                                                </View>
-                                                <View style={styles.editDeleteBTn}>
-                                                    <TouchableOpacity>
-                                                        <View style={{ marginRight: 55 }}>
-                                                            <Text style={{ backgroundColor: 'green', paddingVertical: 6, paddingHorizontal: 20, fontWeight: '700', borderRadius: 5, color: "#fff", }}>EDIT</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity>
-                                                        <View style={{ marginLeft: 55 }}>
-                                                            <Text style={{ backgroundColor: 'red', paddingVertical: 6, paddingHorizontal: 10, fontWeight: '700', borderRadius: 5, color: "#fff", }}>DELETE</Text>
-                                                        </View>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-
-
-                                        </View>
+                                    <View
+                                        style={{
+                                            width: "27%",
+                                            height: 50,
+                                            borderWidth: 1,
+                                            borderRadius: 5,
+                                            borderColor: 'grey',
+                                            marginRight: "2%",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            // backgroundColor: "yellow"
+                                        }}
+                                    >
+                                        <TextInput
+                                            placeholder={"Expense"}
+                                            placeholderStyle={styles.text}
+                                            style={styles.input}
+                                            onChangeText={(text) => { this.setState({ expense: text }) }}
+                                            value={expense}
+                                        />
                                     </View>
+
+                                    <View
+                                        style={{
+                                            width: "27%",
+                                            height: 50,
+                                            borderWidth: 1,
+                                            borderRadius: 5,
+                                            borderColor: 'grey',
+                                            marginRight: "1.25%",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                        }}
+                                    >
+                                        <TextInput
+                                            keyboardType="numeric"
+                                            placeholder={"Amount"}
+                                            placeholderStyle={styles.text}
+                                            style={styles.input}
+                                            onChangeText={(text) => { this.setState({ amount: text }) }}
+                                            value={amount}
+                                        />
+                                    </View>
+
+                                    {
+                                        update ?
+                                            <TouchableOpacity style={styles.saveBtn} onPress={() => this.update()}>
+                                                <Text style={styles.saveBtnText}>Update</Text>
+                                            </TouchableOpacity>
+                                            :
+                                            <TouchableOpacity style={styles.saveBtn} onPress={() => this.saveProduct()}>
+                                                <Text style={styles.saveBtnText}>Add</Text>
+                                            </TouchableOpacity>
+                                    }
 
                                 </View>
+
+                                {/* searching section */}
+
+                                <View style={{ width: "100%", alignItems: 'center' }}>
+                                    <View style={{ width: "100%", }}>
+                                        <Text style={styles.searchByText}>Search by Date (Product)</Text>
+                                        <View style={styles.searchByView}>
+                                            <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
+
+                                                <Picker
+                                                    mode="dropdown"
+                                                    selectedValue={ddSelectedValue}
+                                                    style={{
+                                                        fontWeight: "bold",
+                                                        color: "grey",
+                                                        width: "100%"
+                                                    }}
+                                                    onValueChange={(itemValue, itemIndex) => this.setSelectedValue(itemValue, itemIndex)}
+                                                >
+                                                    <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Items list"} value={""} />
+                                                    {
+                                                        expenseNames && expenseNames.map((key, index) => {
+                                                            return (
+                                                                <Items style={{ fontSize: 12 }} label={key} value={key} key={index} />
+                                                            )
+                                                        })
+                                                    }
+                                                </Picker>
+
+                                            </View>
+
+                                            <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
+                                                <View style={{ flexDirection: "row", width: "100%", }}>
+                                                    <DatePicker showIcon={false}
+                                                        style={{ width: "100%" }}
+                                                        date={dateFrom}
+                                                        placeholder="Date From"
+                                                        format="YYYY-MM-DD"
+                                                        confirmBtnText="Confirm"
+                                                        cancelBtnText="Cancel"
+                                                        customStyles={{
+                                                            placeholderText: {
+                                                                color: "grey",
+                                                                fontSize: 17,
+                                                                fontWeight: "bold",
+                                                            },
+                                                            dateInput: {
+                                                                height: 52,
+                                                                borderLeftWidth: 0,
+                                                                borderRightWidth: 0,
+                                                                borderTopWidth: 0,
+                                                                borderBottomWidth: 0,
+                                                                marginRight: "55%",
+                                                                fontWeight: "bold",
+                                                            },
+                                                            // ... You can check the source to find the other keys.
+                                                        }}
+                                                        onDateChange={(date) => this.setDateFrom(date)}
+                                                    />
+                                                    <Fontisto style={{ color: "#4B534F", left: "-90%", top: 12 }} size={16} name={"date"} />
+                                                </View>
+                                            </View>
+
+                                            <View style={[styles.dateFrom, { flex: 1, marginRight: "2%", }]}>
+                                                <View style={{ flexDirection: "row", width: "100%", }}>
+                                                    <DatePicker
+                                                        showIcon={false}
+                                                        style={{ width: "100%" }}
+                                                        date={dateTo}
+                                                        placeholder="Date To"
+                                                        format="YYYY-MM-DD"
+                                                        confirmBtnText="Confirm"
+                                                        cancelBtnText="Cancel"
+                                                        customStyles={{
+                                                            placeholderText: {
+                                                                color: "grey",
+                                                                fontSize: 17,
+                                                                fontWeight: "bold",
+                                                            },
+                                                            dateInput: {
+                                                                height: 52,
+                                                                borderLeftWidth: 0,
+                                                                borderRightWidth: 0,
+                                                                borderTopWidth: 0,
+                                                                borderBottomWidth: 0,
+                                                                marginRight: "55%",
+                                                                fontWeight: "bold",
+                                                            },
+                                                            // ... You can check the source to find the other keys.
+                                                        }}
+                                                        onDateChange={(date) => this.setDateTo(date)}
+                                                    />
+                                                    <Fontisto style={{ color: "#4B534F", left: "-90%", top: 12 }} size={16} name={"date"} />
+                                                </View>
+
+                                            </View>
+
+                                            <TouchableOpacity
+                                                style={{
+                                                    flex: 0.5,
+                                                    borderRadius: 5,
+                                                    justifyContent: "center",
+                                                    alignItems: "center",
+                                                    backgroundColor: dateFrom && dateTo ? '#003366' : 'grey',
+                                                }}
+                                                onPress={() => { dateFrom && dateTo && ddSelectedValue ? this.search() : null }}
+                                            // onPress={() => { this.search() }}
+                                            >
+                                                <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff', fontSize: 16 }}>Search</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+
+
+
+                                    </View>
+                                </View>
+                            </View>
+
+                            {/* <View style={styles.addExpenseForm}> */}
+                            <View
+                                style={{
+                                    display: 'flex',
+                                    height: "60%",
+                                    width: '90%',
+                                }}
+                            >
+                                {/* searching result */}
+                                < Text style={styles.searchDateText}>Search by Date</Text>
+                                <Text style={styles.productNameText}>Expense</Text>
+                                <ScrollView showsVerticalScrollIndicator={false} >
+
+                                    <View
+                                        style={{
+                                            marginTop: 5,
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            padding: 5,
+                                        }}
+                                    >
+                                        <View style={{
+                                            flexDirection: 'row',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            borderBottomWidth: 1,
+                                            borderColor: "grey",
+                                            width: "100%"
+                                            // backgroundColor: "red"
+                                        }} >
+                                            <View style={{ width: '25%', marginBottom: 10, }}>
+                                                <Text style={{ fontWeight: "bold" }}>Date & Time</Text>
+                                            </View>
+                                            <View style={{ width: '25%', marginBottom: 10, }}>
+                                                <Text style={{ fontWeight: "bold" }}>Expense</Text>
+                                            </View>
+                                            <View style={{ width: '25%', marginBottom: 10, }}>
+                                                <Text style={{ fontWeight: "bold" }}>Amount</Text>
+                                            </View>
+
+                                            <View style={{ width: '8%', margin: "1%" }}>
+                                            </View>
+
+                                            <View style={{ width: '8%', margin: "1%" }}>
+                                            </View>
+                                        </View>
+
+                                        {
+                                            soortedList && soortedList.length ?
+                                                soortedList.map((key, index) => {
+                                                    return (
+                                                        <View style={{
+                                                            flexDirection: 'row',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center',
+                                                            borderBottomWidth: 1,
+                                                            borderColor: "grey",
+                                                            width: "100%",
+                                                            // backgroundColor: "yellow"
+                                                        }} key={index} >
+                                                            <View style={{ width: '25%', }}>
+                                                                <Text style={styles.text}>{moment(key.dateAndTime, "x").format("lll")}</Text>
+                                                            </View>
+                                                            <View style={{ width: '25%', }}>
+                                                                <Text style={styles.text}>{key.expense}</Text>
+                                                            </View>
+                                                            <View style={{ width: '25%', }}>
+                                                                <Text style={styles.text}>{key.amount}</Text>
+                                                            </View>
+
+                                                            <View style={{ width: '8%', margin: "1%" }}>
+                                                                <TouchableOpacity
+                                                                    style={{
+                                                                        height: 35,
+                                                                        borderRadius: 5,
+                                                                        borderWidth: 1,
+                                                                        borderColor: "green",
+                                                                        justifyContent: "center",
+                                                                        alignItems: "center"
+                                                                    }}
+                                                                    onPress={() => {
+                                                                        this.setState({
+                                                                            update: true,
+                                                                            dateAndTime: moment(key.dateAndTime, "x").format("YYYY-MM-DD hh:mm"),
+                                                                            expense: key.expense,
+                                                                            amount: key.amount,
+                                                                            updateItem: key,
+                                                                        })
+                                                                    }}
+                                                                >
+                                                                    <AntDesign name="edit" style={{ color: 'green', fontWeight: 'bold', fontSize: 28, }} />
+                                                                </TouchableOpacity>
+                                                            </View>
+
+                                                            <View style={{ width: '8%', margin: "1%" }}>
+                                                                <TouchableOpacity
+                                                                    style={{
+                                                                        height: 35,
+                                                                        borderRadius: 5,
+                                                                        backgroundColor: 'red',
+                                                                        justifyContent: "center",
+                                                                        alignItems: "center"
+                                                                    }}
+                                                                    onPress={() => { this.delete(key.id, index) }}
+                                                                >
+                                                                    <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                        </View>
+                                                    )
+                                                })
+                                                : null
+                                        }
+                                    </View>
+                                </ScrollView>
                             </View>
                         </View>
-
-                    </ScrollView>
+                    </View>
                 </View>
-            </AppContainer>
+            </AppContainer >
         )
     }
 }
 
+
+let mapStateToProps = state => {
+    return {
+        expenseList: state.root.expenseList,
+        save: state.root.save,
+    };
+};
+function mapDispatchToProps(dispatch) {
+    return ({
+        addExpense: (data) => {
+            dispatch(addExpense(data))
+        },
+        deleteExpense: (key) => {
+            dispatch(deleteExpense(key))
+        },
+        updateExpense: (key, pro) => {
+            dispatch(updateExpense(key, pro))
+        },
+    })
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AddExpense);
+
 const styles = StyleSheet.create({
-    container: {},
-    mainView: {
-        width: "100%",
-        height: '94.5%',
-        // justifyContent: 'center',
-        alignItems: 'center',
+    container: {
+        flex: 1,
+        paddingTop: 40,
+        alignItems: "center"
     },
-    iconView: {
-        borderRadius: 50,
-        display: 'flex',
-        height: 100,
-        width: 100,
-        borderWidth: 1,
+    scrollView: {
+        backgroundColor: 'pink',
+        marginHorizontal: 20,
+    },
+    mainView: {
+        flex: 1,
+        height: "100%",
+        width: "100%",
+        alignItems: 'center',
+        // backgroundColor: "green"
     },
     addExpenseForm: {
-        height: "75%",
         display: 'flex',
+        height: "30%",
         width: '90%',
-        justifyContent: 'center',
-        padding: '2%'
-    },
-    addExpenseText: {
-        color: 'grey',
-        fontWeight: 'bold',
-        marginBottom: "2%",
-        fontSize: 18
+        marginTop: 15,
+        // justifyContent: 'center',
+        // alignItems: "center",
+        // backgroundColor: "red"
     },
     expenseForm: {
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        marginBottom: '8%',
+        marginBottom: '5%',
+        // backgroundColor: "green"
         // borderWidth:1
     },
     dateTime: {
-        flex: 1,
+        // flex: 1,
+        width: "27%",
         height: 50,
         marginRight: '2%',
         borderWidth: 1,
         borderRadius: 5,
         borderColor: 'grey',
-        padding: "2%"
-    },
-    input: {
-        fontSize: 17,
-        fontWeight: 'bold',
-        height: 40,
-        marginTop: -5
+        justifyContent: "center",
+        alignItems: "center",
+        // backgroundColor: "yellow"
+        // padding: "2%"
     },
     amount: {
         flex: 1,
@@ -464,20 +602,41 @@ const styles = StyleSheet.create({
         padding: "2%"
     },
     saveBtn: {
-        marginLeft: '2%',
         height: 50,
-        // marginRight: '5%',
-        flex: 0.5,
+        width: "14%",
         borderWidth: 1,
         borderRadius: 5,
         backgroundColor: '#003366',
         borderColor: 'grey',
-        padding: "2%"
+        marginLeft: '0.3%',
+        alignItems: "center",
+        justifyContent: "center",
     },
     saveBtnText: {
         color: '#fff',
         fontWeight: 'bold',
         textAlign: 'center'
+    },
+    input: {
+        // fontSize: 17,
+        width: "100%",
+        // fontWeight: 'bold',
+
+        marginLeft: "6%",
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: "#808080",
+        // height: 50,
+        // alignItems: "center",
+        // justifyContent: "center",
+        // backgroundColor: "red"
+        // marginTop: -5
+    },
+    text: {
+        color: "grey",
+        fontWeight: 'bold',
+        fontSize: 12,
+        // marginLeft: 14
     },
     searchByText: {
         fontWeight: 'bold',
@@ -489,13 +648,17 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         width: "100%",
-        marginVertical: 20
+        marginVertical: 20,
+        height: 50,
+        // backgroundColor: "red",
     },
     dateFrom: {
         borderWidth: 1,
         borderColor: 'grey',
         borderRadius: 5,
-        padding: "2%"
+        justifyContent: "center",
+        alignItems: "center"
+        // padding: "2%"
     },
     dateFromText: {
         color: "grey",
@@ -537,26 +700,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     }
 })
-function mapStateToProps(state) {
-    return {
-        // testing: state.root.testing,
-        testing: state.appReducer.testing,
 
 
-    }
-}
-
-function mapDispatchToProps(dispatch) {
-    return {
-        actions: bindActionCreators({
-            setDataReducer
-        }, dispatch),
-    }
-}
-
-// export default connect(
-//     mapStateToProps,
-//     mapDispatchToProps,
-// )(AddExpense)
-
-// export default AddExpense
+// export default Home

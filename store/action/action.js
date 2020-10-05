@@ -24,7 +24,13 @@ import {
     AddExpenseSchema,
     localDbExpenseKeyForSaveMongoDbSchema,
     localDbExpenseKeyForDeleteMongoDbSchema,
-    localDbExpenseKeyForUpdateMongoDbSchema
+    localDbExpenseKeyForUpdateMongoDbSchema,
+    // add inventory scheema
+    AddInventory,
+    localDbInventoryKeyForSaveMongoDbSchema,
+    localDbInventoryKeyForDeleteMongoDbSchema,
+    localDbInventoryKeyForUpdateMongoDbSchema
+
 } from '../../realm/Schema'
 
 /* Splash screen functions for getting data (START) */
@@ -114,6 +120,76 @@ export function getProducts(navigation) {
             })
             .catch(function (error) {
                 console.log(error, 'Error_Getting_data_from_local_DB');
+            });
+        //     }
+        //     else {
+        //         Realm.open({ schema: [localDbAddProductKeyForSaveMongoDbSchema] })
+        //             .then(realm => {
+        //                 const getProductKey = realm.objects('localDbAddProductKeyForSaveMongoDb')
+        //                 let key = JSON.parse(JSON.stringify(getProductKey))
+        //                 console.log(key, 'Getting_Product_key_from_local_DB')
+        //             })
+
+        //             .catch(function (error) {
+        //                 console.log(error, 'Error_Getting_data_from_local_DB');
+        //             });
+        //     }
+        // });
+    }
+
+}
+export function getExpense(navigation) {
+    return dispatch => {
+        // NetInfo.fetch().then(state => {
+        //     if (!state.isConnected) {
+        Realm.open({ schema: [AddExpenseSchema] })
+            .then(realm => {
+                const getExpense = realm.objects('AddExpense')
+                let myJSON = JSON.parse(JSON.stringify(getExpense))
+                console.log(myJSON, 'Getting_Expense_data_from_local_DB')
+                dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                // setTimeout(() => {
+                //     navigation.navigate("App")
+                // }, 5000)
+                navigation.navigate("App")
+            })
+            .catch(function (error) {
+                console.log(error, 'Error_Getting_Expense_data_from_local_DB');
+            });
+        //     }
+        //     else {
+        //         Realm.open({ schema: [localDbAddProductKeyForSaveMongoDbSchema] })
+        //             .then(realm => {
+        //                 const getProductKey = realm.objects('localDbAddProductKeyForSaveMongoDb')
+        //                 let key = JSON.parse(JSON.stringify(getProductKey))
+        //                 console.log(key, 'Getting_Product_key_from_local_DB')
+        //             })
+
+        //             .catch(function (error) {
+        //                 console.log(error, 'Error_Getting_data_from_local_DB');
+        //             });
+        //     }
+        // });
+    }
+
+}
+export function getInventory(navigation) {
+    return dispatch => {
+        // NetInfo.fetch().then(state => {
+        //     if (!state.isConnected) {
+        Realm.open({ schema: [AddInventory] })
+            .then(realm => {
+                const getData = realm.objects('inventory')
+                let myJSON = JSON.parse(JSON.stringify(getData))
+                console.log(myJSON, 'Getting_Inventory_data_from_local_DB')
+                dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                // setTimeout(() => {
+                //     navigation.navigate("App")
+                // }, 5000)
+                navigation.navigate("App")
+            })
+            .catch(function (error) {
+                console.log(error, 'Error_Getting_Inventory_data_from_local_DB');
             });
         //     }
         //     else {
@@ -1042,7 +1118,7 @@ export function deleteExpense(key) {
         NetInfo.fetch().then(state => {
             if (!state.isConnected) {
                 // delete data from local db
-                Realm.open({ schema: [localDbExpenseKeyForDeleteMongoDbSchema] })
+                Realm.open({ schema: [AddExpenseSchema] })
                     .then(realm => {
                         realm.write(() => {
                             const deleteById = realm.objectForPrimaryKey('AddExpense', key);
@@ -1094,7 +1170,7 @@ export function deleteExpense(key) {
                     .then(result => {
                         let data = result.data
                         // delete data from local db
-                        Realm.open({ schema: [localDbExpenseKeyForDeleteMongoDbSchema] })
+                        Realm.open({ schema: [AddExpenseSchema] })
                             .then(realm => {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('AddExpense', key);
@@ -1120,7 +1196,7 @@ export function deleteExpense(key) {
     }
 }
 export function updateExpense(key, updateData) {
-    console.log(key, updateData, "Updated_data")
+    console.log(key, updateData, "Updated_Data")
     return dispatch => {
         NetInfo.fetch().then(state => {
             if (!state.isConnected) {
@@ -1213,3 +1289,328 @@ export function updateExpense(key, updateData) {
 
     }
 }
+
+/* Inventory section */
+export function saveInventorys(getData) {
+    console.log(getData, "Updated_Data")
+    return dispatch => {
+
+        // delete Inventory from local db
+        // Realm.open({ schema: [AddInventory] })
+        //     .then(realm => {
+        //         realm.write(() => {
+        //             // ALL_OBJECTS_DELETE
+        //             const deleteObject = realm.objects('inventory');
+        //             realm.delete(deleteObject);
+
+        //             const inventory = realm.objects('inventory')
+        //             let myJSON = JSON.parse(JSON.stringify(inventory))
+        //             console.log(myJSON, 'After_Add_Inventory')
+        //         });
+        //         realm.close();
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error, 'Error_Add_Inventory_to_local_DB');
+        //     });
+
+        NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                // save Inventory to local db
+                Realm.open({ schema: [AddInventory] })
+                    .then(realm => {
+                        realm.write(() => {
+                            realm.create('inventory', {
+                                id: getData.id,
+                                dateAndTime: getData.dateAndTime,
+                                employeeName: getData.employeeName,
+                                product: getData.product,
+                                totalAmount: getData.totalAmount,
+                                advanceDetection: getData.advanceDetection,
+                                loanDetection: getData.loanDetection,
+                                finalAmount: getData.finalAmount,
+                            });
+                            const inventory = realm.objects('inventory')
+                            let myJSON = JSON.parse(JSON.stringify(inventory))
+                            console.log(myJSON, 'After_Add_Inventory')
+                            dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+
+                        });
+                        realm.close();
+                    })
+                    .catch(function (error) {
+                        console.log(error, 'Error_Add_Inventory_to_local_DB');
+                    });
+
+                // save key to local db
+                Realm.open({ schema: [localDbInventoryKeyForSaveMongoDbSchema] })
+                    .then(realm => {
+                        realm.write(() => {
+                            realm.create('localDbInventoryKeyForSaveMongoDb', {
+                                id: getData.id,
+                            });
+                            const updatedData = realm.objects('localDbInventoryKeyForSaveMongoDb')
+                            let myJSON = JSON.parse(JSON.stringify(updatedData))
+                            console.log(myJSON, 'After_Add_localDBb_Key_Inventory')
+
+                        });
+                        realm.close();
+                    })
+                    .catch(function (error) {
+                        console.log(error, 'Error_Inventory_key_Save_to-local_DB');
+                    });
+            }
+            else {
+                // save inventory to mongo db
+                let cloneData = {
+                    localDbKey: getData.id,
+                    dateAndTime: getData.dateAndTime,
+                    employeeName: getData.employeeName,
+                    product: getData.product,
+                    totalAmount: getData.totalAmount,
+                    advanceDetection: getData.advanceDetection,
+                    loanDetection: getData.loanDetection,
+                    finalAmount: getData.finalAmount,
+                }
+                var options = {
+                    method: 'POST',
+                    url: baseUrl + "/addInventory/addInventory",
+                    headers:
+                    {
+                        'cache-control': 'no-cache',
+                        "Allow-Cross-Origin": '*',
+                    },
+                    data: cloneData
+                }
+                axios(options)
+                    .then(result => {
+                        let data = result.data
+                        // save Inventory to local db
+                        Realm.open({ schema: [AddInventory] })
+                            .then(realm => {
+                                realm.write(() => {
+                                    realm.create('inventory', {
+                                        id: getData.id,
+                                        dateAndTime: getData.dateAndTime,
+                                        employeeName: getData.employeeName,
+                                        product: getData.product,
+                                        totalAmount: getData.totalAmount,
+                                        advanceDetection: getData.advanceDetection,
+                                        loanDetection: getData.loanDetection,
+                                        finalAmount: getData.finalAmount,
+                                    });
+                                    const inventory = realm.objects('inventory')
+                                    let myJSON = JSON.parse(JSON.stringify(inventory))
+                                    console.log(myJSON, 'After_Add_Inventory')
+                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                });
+                                realm.close();
+                            })
+                            .catch(function (error) {
+                                console.log(error, 'Error_Add_Inventory_to_local_DB');
+                            });
+                    })
+                    .catch(err => {
+                        let error = JSON.parse(JSON.stringify(err))
+                        console.log(error, err, 'Error_Add_Inventory_to_MongoDb')
+                        alert(error.message)
+                    })
+            }
+        });
+
+    }
+}
+export function deleteInventory(key) {
+    return dispatch => {
+        NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                // delete data from local db
+                Realm.open({ schema: [AddInventory] })
+                    .then(realm => {
+                        realm.write(() => {
+                            const deleteById = realm.objectForPrimaryKey('inventory', key);
+                            realm.delete(deleteById);
+                            const deletedData = realm.objects('inventory')
+                            let myJSON = JSON.parse(JSON.stringify(deletedData))
+                            console.log(myJSON, 'After_Delete_inventory')
+                            dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                        })
+                        realm.close();
+                    })
+                    .catch(function (error) {
+                        console.log(error, 'Error_Delete_Inventory_From_local_DB');
+                    });
+
+                // save key to local db
+                Realm.open({ schema: [localDbInventoryKeyForDeleteMongoDbSchema] })
+                    .then(realm => {
+                        realm.write(() => {
+                            realm.create('localDbInventoryKeyForDeleteMongoDb', {
+                                id: key,
+                            });
+                            const updatedKey = realm.objects('localDbInventoryKeyForDeleteMongoDb')
+                            let myJSON = JSON.parse(JSON.stringify(updatedKey))
+                            console.log(myJSON, 'After_Add_localDB_Inventory_Key_for_delete_data')
+                        });
+                        realm.close();
+                    })
+                    .catch(error => {
+                        console.log(error, 'Error_delete_inventory_key_to_local_DB');
+                    });
+            }
+            else {
+                // delete data from mongo db
+                let cloneData = {
+                    localDbKey: key,
+                }
+                var options = {
+                    method: 'POST',
+                    url: baseUrl + "/addExpense/deleteExpense",
+                    headers:
+                    {
+                        'cache-control': 'no-cache',
+                        "Allow-Cross-Origin": '*',
+                    },
+                    data: cloneData
+                }
+                axios(options)
+                    .then(result => {
+                        let data = result.data
+                        // delete data from local db
+                        Realm.open({ schema: [AddInventory] })
+                            .then(realm => {
+                                realm.write(() => {
+                                    const deleteById = realm.objectForPrimaryKey('inventory', key);
+                                    realm.delete(deleteById);
+                                    const deletedData = realm.objects('inventory')
+                                    let myJSON = JSON.parse(JSON.stringify(deletedData))
+                                    console.log(myJSON, 'After_Delete_Inventory')
+                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                })
+                                realm.close();
+                            })
+                            .catch(function (error) {
+                                console.log(error, 'Error_Delete_Inventory_From_local_DB');
+                            });
+                    })
+                    .catch(err => {
+                        let error = JSON.parse(JSON.stringify(err))
+                        console.log(error, err, 'Error_delete_inventory_to_MongoDb',)
+                        alert(error.message)
+                    })
+            }
+        });
+    }
+}
+export function updateInventory(key, getData) {
+    console.log(key, getData, "Updated_Data")
+    return dispatch => {
+        NetInfo.fetch().then(state => {
+            if (!state.isConnected) {
+                // update data from local db
+                Realm.open({ schema: [AddInventory] })
+                    .then(realm => {
+                        realm.write(() => {
+                            realm.create('inventory', {
+                                id: key,
+                                dateAndTime: getData.dateAndTime,
+                                employeeName: getData.employeeName,
+                                product: getData.product,
+                                totalAmount: getData.totalAmount,
+                                advanceDetection: getData.advanceDetection,
+                                loanDetection: getData.loanDetection,
+                                finalAmount: getData.finalAmount,
+                            }, 'modified')
+                            const updatedData = realm.objects('inventory')
+                            let myJSON = JSON.parse(JSON.stringify(updatedData))
+                            console.log(myJSON, 'After_Updated_Inventory')
+                            dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                        })
+                        realm.close();
+                    })
+                    .catch(function (error) {
+                        console.log(error, 'Error_Update_Expense_to_local_DB');
+                    });
+
+                // save key to local db
+                Realm.open({ schema: [localDbInventoryKeyForUpdateMongoDbSchema] })
+                    .then(realm => {
+                        realm.write(() => {
+                            realm.create('localDbInventoryKeyForUpdateMongoDb', {
+                                id: key,
+                            });
+                            const localDbUpdatedKey = realm.objects('localDbInventoryKeyForUpdateMongoDb')
+                            let myJSON = JSON.parse(JSON.stringify(localDbUpdatedKey))
+                            console.log(myJSON, 'After_Add_local_DB_Inventory_Key_for_update_data_to_MongoDb')
+                        });
+                        realm.close();
+                    })
+                    .catch(function (error) {
+                        console.log(error, 'Error_update_Inventory_Key_to_local_DB');
+                    });
+
+            }
+            else {
+                let cloneData = {
+                    localDbKey: key,
+                    dateAndTime: getData.dateAndTime,
+                    employeeName: getData.employeeName,
+                    product: getData.product,
+                    totalAmount: getData.totalAmount,
+                    advanceDetection: getData.advanceDetection,
+                    loanDetection: getData.loanDetection,
+                    finalAmount: getData.finalAmount,
+                }
+                var options = {
+                    method: 'POST',
+                    url: baseUrl + "/addExpense/updateInventory",
+                    headers:
+                    {
+                        'cache-control': 'no-cache',
+                        "Allow-Cross-Origin": '*',
+                    },
+                    data: cloneData
+                }
+                axios(options)
+                    .then(result => {
+                        dispatch({ type: "SAVE", payload: true })
+                        let data = result.data
+                        // update data from local db
+                        Realm.open({ schema: [AddInventory] })
+                            .then(realm => {
+                                realm.write(() => {
+                                    realm.create('inventory', {
+                                        id: key,
+                                        dateAndTime: getData.dateAndTime,
+                                        employeeName: getData.employeeName,
+                                        product: getData.product,
+                                        totalAmount: getData.totalAmount,
+                                        advanceDetection: getData.advanceDetection,
+                                        loanDetection: getData.loanDetection,
+                                        finalAmount: getData.finalAmount,
+                                    }, 'modified')
+                                    const updatedData = realm.objects('inventory')
+                                    let myJSON = JSON.parse(JSON.stringify(updatedData))
+                                    console.log(myJSON, 'After_Updated_Inventory')
+                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                })
+                                realm.close();
+                            })
+                            .catch(function (error) {
+                                console.log(error, 'Error_Update_Inventory_to_local_DB');
+                            });
+                    })
+                    .catch(err => {
+                        let error = JSON.parse(JSON.stringify(err))
+                        console.log(error, err, "Error_update_Inventory_to_Mongo_DB")
+                        alert(error.message)
+                    })
+            }
+        });
+
+    }
+}
+
+
+
+
+

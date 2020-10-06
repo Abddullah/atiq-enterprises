@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Dimensions, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Picker, Items, Alert } from 'react-native'
+import { Dimensions, StyleSheet, Text, TextInput, View, TouchableOpacity, ScrollView, Picker, Items, ActivityIndicator, Alert } from 'react-native'
 // import { DatePicker } from 'native-base'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-datepicker'
@@ -11,7 +11,7 @@ import moment from 'moment';
 import Fontisto from 'react-native-vector-icons/Fontisto'
 // store
 import { connect } from "react-redux";
-import { saveInventorys, deleteInventory } from '../../store/action/action';
+import { saveInventorys, deleteInventory, updateInventorys } from '../../store/action/action';
 
 class AddInventory extends React.Component {
     constructor() {
@@ -31,6 +31,7 @@ class AddInventory extends React.Component {
 
         }
     }
+
 
     UNSAFE_componentWillMount() {
         const { employee, productsList, inventoryList } = this.props
@@ -59,8 +60,8 @@ class AddInventory extends React.Component {
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
-        const { employee, productsList } = nextProps
-        // console.log(productsList, "UNSAFE_componentWillReceiveProps")
+        const { employee, productsList, inventoryList } = nextProps
+        console.log(inventoryList, "UNSAFE_componentWillReceiveProps")
         let updatedProduct = []
         for (let index = 0; index < productsList.length; index++) {
             var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
@@ -81,12 +82,14 @@ class AddInventory extends React.Component {
         this.setState({
             employeeNameList: name,
             productsName: updatedProduct,
+            // inventoryList,
         })
     }
 
     setDateAndTime(date, time) {
+        console.log(date, 'date__date')
         this.setState({
-            dateAndTime: date
+            dateAndTime: date,
         })
     }
 
@@ -156,7 +159,6 @@ class AddInventory extends React.Component {
         if (product) {
             let rate = this.state[`rate${index}`]
             let amount = waight * rate
-            console.log(amount, index, "Amount_Generate")
             this.setState({
                 [`weight${index}`]: waight,
                 [`amount${index}`]: amount,
@@ -166,6 +168,9 @@ class AddInventory extends React.Component {
             Alert.alert("Please select product")
         }
     }
+
+
+
 
     createProductObject(index) {
         let { selectedProducts, advanceDetection, loanDetection } = this.state
@@ -180,6 +185,10 @@ class AddInventory extends React.Component {
             rate: rate,
             amount: amount,
         }
+        if (selectedProducts[index]) {
+            selectedProducts.splice(index, 1)
+        }
+        console.log(index, 'selectedProducts__createProductObject')
         selectedProducts.push(productObj)
         for (let index = 0; index < selectedProducts.length; index++) {
             let element = selectedProducts[index].amount;
@@ -260,9 +269,44 @@ class AddInventory extends React.Component {
             inventoryList: soortedData,
         })
     }
+    updateInventory() {
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey } = this.state
+        var dateMiliSecond = moment(dateAndTime).format("x");
+        let cloneObject = {
+            dateAndTime: dateMiliSecond,
+            employeeName: selectedEmployee,
+            product: JSON.stringify(selectedProducts),
+            totalAmount: totalAmount,
+            advanceDetection: Number(advanceDetection),
+            loanDetection: Number(loanDetection),
+            finalAmount: finalAmount,
+            id: localDbKey
+        }
+        this.props.updateInventorys(localDbKey, cloneObject)
+        this.setState({
+            inventoryList: [],
+            selectedProducts: [],
+            dateAndTime: "",
+            inventoryListTime: "",
+            employeeName: "",
+            product: "",
+            totalAmount: 0,
+            advanceDetection: 0,
+            loanDetection: 0,
+            finalAmount: 0,
+            selectedEmployee: "",
+            inventoryItemsQty: ["1"],
+            todaytotalAmount: '',
+            edit: false,
+            [`selectedProduct${0}`]: '',
+            [`weight${0}`]: '',
+            [`rate${0}`]: '',
+            [`amount${0}`]: '',
+        })
+    }
 
     saveInventory() {
-        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount } = this.state
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
         let cloneObject = {
             dateAndTime: dateMiliSecond,
@@ -274,11 +318,11 @@ class AddInventory extends React.Component {
             finalAmount: finalAmount,
             id: parseInt(Date.now() + dateAndTime)
         }
-        // console.log(cloneObject, "Clone_object_for_save_inventory")
         this.props.saveInventorys(cloneObject)
         this.setState({
             dateAndTime: "",
             employeeName: "",
+            inventoryListTime: "",
             product: "",
             totalAmount: 0,
             advanceDetection: 0,
@@ -286,11 +330,18 @@ class AddInventory extends React.Component {
             finalAmount: 0,
             selectedEmployee: "",
             inventoryItemsQty: ["1"],
+            selectedProducts: [],
+            todaytotalAmount: '',
+            [`selectedProduct${0}`]: '',
+            [`weight${0}`]: '',
+            [`rate${0}`]: '',
+            [`amount${0}`]: '',
         })
     }
 
     deleteInventory() {
         let { localDbKey } = this.state
+        console.log(localDbKey, 'localDbKey')
         this.props.deleteInventory(localDbKey)
         this.setState({
             dateAndTime: "",
@@ -302,12 +353,13 @@ class AddInventory extends React.Component {
             finalAmount: 0,
             selectedEmployee: "",
             inventoryItemsQty: ["1"],
+            selectedProducts: [],
         })
     }
 
     setAndSaveInventory(key, index) {
-        console.log(key, "setAndSaveInventory")
         let products = JSON.parse(key.product)
+        console.log(key, "key_dateAndTimendSaveInventory")
 
         let inventoryItemsQty = ["1"]
 
@@ -315,17 +367,32 @@ class AddInventory extends React.Component {
             inventoryItemsQty.push("1")
         }
 
+        for (let index = 0; index < products.length; index++) {
+            const element = products[index];
+            this.setState({
+                [`selectedProduct${index}`]: element.productName,
+                [`weight${index}`]: element.waight,
+                [`rate${index}`]: element.rate,
+                [`amount${index}`]: element.amount,
+            })
+        }
+
         this.setState({
-            dateAndTime: key.dateAndTime,
-            employeeName: key.employeeName,
+            selectedIndex: index,
+            edit: true,
+            localDbKey: key.id,
+            dateAndTime: moment(Number(key.dateAndTime)).format("YYYY-MM-DD"),
+            selectedEmployee: key.employeeName,
             product: products,
+            selectedProducts: products,
             totalAmount: key.totalAmount,
             advanceDetection: key.advanceDetection,
             loanDetection: key.loanDetection,
             finalAmount: key.finalAmount,
-            selectedEmployee: key.selectedEmployee,
+            // selectedEmployee: key.selectedEmployee,
             inventoryItemsQty: inventoryItemsQty,
         })
+
     }
 
 
@@ -334,7 +401,7 @@ class AddInventory extends React.Component {
         const { employeeNameList, productsName, dateAndTime,
             selectedEmployee, inventoryItemsQty, totalAmount,
             finalAmount, inventoryListTime, selectedProducts,
-            todaytotalAmount, inventoryList,
+            todaytotalAmount, inventoryList, edit, loader, selectedIndex
         } = this.state
         console.log(inventoryList, "Render_console")
 
@@ -395,7 +462,7 @@ class AddInventory extends React.Component {
                                         }}
                                         onValueChange={(itemValue, itemIndex) => this.setEmployee(itemValue, itemIndex)}
                                     >
-                                        <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Select Employee"} value={""} />
+                                        <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Select Employee"} value={''} />
                                         {
                                             employeeNameList.map((key, index) => {
                                                 return (
@@ -469,6 +536,10 @@ class AddInventory extends React.Component {
                                                                     marginLeft: "15%",
                                                                     color: "grey",
                                                                 }}
+                                                                // onChangeText={(text) => { this.calculateRateAmount(text, index) }}
+                                                                // value={this.state[`weight${index}`]}
+                                                                // onBlur={() => { this.createProductObject(text, index) }}
+
                                                                 onChangeText={(text) => { this.calculateRateAmount(text, index) }}
                                                                 value={this.state[`weight${index}`]}
                                                                 onBlur={() => { this.createProductObject(index) }}
@@ -494,6 +565,7 @@ class AddInventory extends React.Component {
                                                                     color: "grey"
                                                                 }}
                                                             >
+
                                                                 {this.state[`rate${index}`] ? this.state[`rate${index}`] : "Rate"}
                                                             </Text>
 
@@ -589,28 +661,34 @@ class AddInventory extends React.Component {
                                 <View style={{ flexDirection: "row", marginTop: 10, width: "100%", }}>
                                     <View style={{ width: "50%", flex: 1, justifyContent: "flex-end", }}>
                                         <View style={{ width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "center", }}>
+                                            {
+                                                loader ?
+                                                    <ActivityIndicator size="small" color="#003366" /> :
 
-                                            <TouchableOpacity style={{
-                                                width: "30%",
-                                                height: 50,
-                                                borderRadius: 5,
-                                                alignItems: "center",
-                                                justifyContent: "center",
-                                                marginTop: 5,
-                                                backgroundColor: '#003366',
-                                            }}
-                                                onPress={() => { this.saveInventory() }}
-                                            >
-                                                <Text style={{
-                                                    fontSize: 14,
-                                                    fontWeight: "bold",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    color: "white"
-                                                }}>
-                                                    Save
-                                            </Text>
-                                            </TouchableOpacity>
+                                                    <TouchableOpacity style={{
+                                                        width: "30%",
+                                                        height: 50,
+                                                        borderRadius: 5,
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        marginTop: 5,
+                                                        backgroundColor: '#003366',
+                                                    }}
+                                                        onPress={() => { edit ? this.updateInventory() : this.saveInventory() }}
+                                                    >
+                                                        <Text style={{
+                                                            fontSize: 14,
+                                                            fontWeight: "bold",
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            color: "white"
+                                                        }}>
+                                                            {
+                                                                edit ? 'Update' : 'Save'
+                                                            }
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                            }
 
                                             <TouchableOpacity
                                                 style={{
@@ -842,7 +920,7 @@ class AddInventory extends React.Component {
                                                 <TouchableOpacity style={{ height: 40, justifyContent: "center", marginTop: 10, backgroundColor: "#063767" }}
                                                     onPress={() => { this.setAndSaveInventory(key, index) }}
                                                 >
-                                                    <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>{key.employeeName}</Text>
+                                                    <Text style={{ padding: 5, color: selectedIndex == index ? '#063767' : '#fff', backgroundColor: selectedIndex == index ? '#fff' : null, fontWeight: '700' }}>{key.employeeName}</Text>
                                                 </TouchableOpacity>
                                             )
                                         })
@@ -897,6 +975,10 @@ function mapDispatchToProps(dispatch) {
         deleteInventory: (key) => {
             dispatch(deleteInventory(key))
         },
+        updateInventorys: (key, data) => {
+            dispatch(updateInventorys(key, data))
+
+        }
     })
 }
 export default connect(mapStateToProps, mapDispatchToProps)(AddInventory);

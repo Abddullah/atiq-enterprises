@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 import axios from 'axios';
 import NetInfo from "@react-native-community/netinfo";
-let baseUrl = "http://192.168.0.112:3002"
+let baseUrl = "http://192.168.10.12:3002"
 // local DB and schema
 const Realm = require('realm');
 import {
@@ -1419,6 +1419,7 @@ export function saveInventorys(getData) {
 
     }
 }
+// updateInventorys
 export function deleteInventory(key) {
     return dispatch => {
         NetInfo.fetch().then(state => {
@@ -1501,7 +1502,7 @@ export function deleteInventory(key) {
         });
     }
 }
-export function updateInventory(key, getData) {
+export function updateInventorys(key, getData) {
     console.log(key, getData, "Updated_Data")
     return dispatch => {
         NetInfo.fetch().then(state => {
@@ -1562,7 +1563,7 @@ export function updateInventory(key, getData) {
                 }
                 var options = {
                     method: 'POST',
-                    url: baseUrl + "/addExpense/updateInventory",
+                    url: baseUrl + "/addInventory/updateInventory",
                     headers:
                     {
                         'cache-control': 'no-cache',

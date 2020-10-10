@@ -22,6 +22,7 @@ import Logo from '../../component/logo'
 import DatePicker from 'react-native-datepicker'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
+import RNPrint from 'react-native-print';
 
 // import {
 //     USBPrinter,
@@ -37,7 +38,8 @@ class Report extends React.Component {
     constructor() {
         super()
         this.state = {
-            currentPrinter: ''
+            selectedPrinter: null
+
         }
     }
     UNSAFE_componentWillMount() {
@@ -97,7 +99,7 @@ class Report extends React.Component {
 
         let convertDateFrom = moment(dateFrom).format("x");
         let convertDateTo = moment(dateTo).format("x");
-      
+
         let expenceItem = []
         let expenceAmount = []
         let soortedProductList = []
@@ -141,10 +143,58 @@ class Report extends React.Component {
         this.setState({ searching: true, })
     }
 
+    async printHTML() {
+        const { employeeLoan, sellectedItem, inventoryList, employeeLoanData, employeeLoanDetection, loanAmount,
+            loanDetectionAmount } = this.state
+        console.log(employeeLoanData[0].name, 'employeeLoanData___employeeLoanData')
+        await RNPrint.print({
+            html:
+
+                `
+                <div style="width: 200; font-size: 30px; padding-left: 20px; margin-bottom:10px"><b>${employeeLoanData[0].name}</b></div>
+                    <hr style="margin-bottom:20px"/>
+                <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
+                <div style="width: 300; font-size: 30px; "><b>Date</b></div>
+                <div style="width: 300; font-size: 30px; "><b>Loan</b></div>
+                <div style="width: 300; font-size: 30px; "><b>Minus Loan</b> </div>
+             </div>
+             ${employeeLoanData && employeeLoanData.length ? employeeLoanData.map((key, index) => {
+                    return (
+
+                        `<div style="display: flex;  flex-direction: row; padding-left: 20px  " >
+                        <div style="width: 300; font-size: 25px;">${moment(key.date, "x").format("YYYY-MM-DD")}</div>
+                        <div style="width: 300; font-size: 25px;">${key.amount}</div>
+                        <div style="width: 300; font-size: 25px;"></div>
+
+                      
+                    </div>`
+                    )
+                }) : null}
+            ${employeeLoanDetection && employeeLoanDetection.length ? employeeLoanDetection.map((key, index) => {
+                    return (
+
+                        `<div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
+                        <div style="width: 300; font-size: 25px;">${moment(key.dateAndTime, "x").format("YYYY-MM-DD")}</div>
+                        <div style="width: 300; font-size: 25px;"></div>
+                        <div style="width: 300; font-size: 25px;">${key.loanDetection}</div>
+                    </div>`
+                    )
+                }) : null}
+                <hr />
+                <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
+                <div style="width: 200; font-size: 25px;"><b>Total Remaning:  </b></div>
+                <div style="width: 300; font-size: 25px;">${loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</div>
+            </div>
+            `
+        })
+    }
+
+
+
     render() {
         const { productsName, searching, currentPrinter, printers, SelectedValue, dateFrom, dateTo, soortedProductList, soortedProductDate, expenceItem, expenceAmount } = this.state
-       
-       
+
+
         // const _connectPrinter = (printer) => USBPrinter.connectPrinter(printer.vendorID, printer.productId).then(() => this.setState({currentPrinter: printer}))
         // const printBillTest = () => {
         //     currentPrinter && USBPrinter.printBill("<C>sample bill</C>");
@@ -409,19 +459,19 @@ class Report extends React.Component {
                                                     // borderBottomWidth: 1,
                                                     // borderColor: "grey",
                                                 }} >
-                                                    <View style={{ width: '25%', marginBottom: 5, }}>
+                                                    <View style={{ width: '28%', marginBottom: 5, }}>
                                                         <Text style={{ fontWeight: "bold" }}>Profit Amount</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', marginBottom: 5, }}>
+                                                    <View style={{ width: '28%', marginBottom: 5, }}>
                                                         <Text style={{ fontWeight: "bold" }}>Expense Amount</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', marginBottom: 5, }}>
+                                                    <View style={{ width: '28%', marginBottom: 5, }}>
                                                         <Text style={{ fontWeight: "bold" }}>Total Profit</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', marginBottom: 5, }}>
-                                                        {/* <TouchableOpacity onPress={printBillTest}>
-                                                            <Text>Print</Text>
-                                                        </TouchableOpacity> */}
+                                                    <View style={{ width: '13%', marginBottom: -15, }}>
+                                                        <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
+                                                            <Text style={{ textAlign: 'center', padding: 10, paddingHorizontal: 20, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
+                                                        </TouchableOpacity>
 
                                                         {/* <Text style={{ fontWeight: "bold" }}>Print</Text> */}
                                                     </View>

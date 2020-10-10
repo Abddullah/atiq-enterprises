@@ -1,9 +1,11 @@
 import { Alert } from 'react-native';
 import axios from 'axios';
 import NetInfo from "@react-native-community/netinfo";
-let baseUrl = "https://fathomless-citadel-43321.herokuapp.com"
-// local DB and schema
 
+// let baseUrl = "http://192.168.10.14:3002"
+let baseUrl = "https://atiq-enterprises.herokuapp.com"
+
+// local DB and schema
 const Realm = require('realm');
 import {
     // employee scheema
@@ -315,8 +317,6 @@ export function deleteEmployeeSplash(navigation) {
     }
 }
 
-
-
 export function getEmployeeLoan(navigation) {
     return dispatch => {
         NetInfo.fetch().then(state => {
@@ -609,8 +609,6 @@ export function deleteEmployeeLoanSplash(navigation) {
     }
 }
 
-
-
 export function getProducts(navigation) {
     // console.log('llllllllllllllllllll')
     return dispatch => {
@@ -887,8 +885,6 @@ export function deleteProductSplash(navigation) {
     }
 }
 
-
-
 export function getExpense(navigation) {
     return dispatch => {
         NetInfo.fetch().then(state => {
@@ -1158,7 +1154,6 @@ export function deleteExpenseSplash(navigation) {
         });
     }
 }
-
 
 export function getInventory(navigation) {
     return dispatch => {
@@ -1437,12 +1432,6 @@ export function deleteInventorySplash(navigation) {
         });
     }
 }
-
-
-
-
-
-
 
 /* Splash screen functions for getting data (End) */
 
@@ -1976,8 +1965,6 @@ export function updateEmployeeLoan(key, updateData) {
 
     }
 }
-
-// deleteEmployeeLoanSplash
 
 /* Product section */
 export function addProduct(productData) {
@@ -2660,7 +2647,6 @@ export function saveInventorys(getData) {
 
     }
 }
-// updateInventorys
 export function deleteInventory(key) {
     console.log(key, 'key__keyssssss')
     return dispatch => {

@@ -71,10 +71,10 @@ class AddInventory extends React.Component {
     //     await RNPrint.print({ filePath: results.filePath })
     // }
 
-    UNSAFE_componentWillMount() {
+    UNSAFE_componentWillMount(refresh) {
+        // alert("work")
         const { employee, productsList, inventoryList } = this.props
-        console.log(productsList, "UNSADDDDDomponentWillMount")
-
+        console.log(productsList, "UNSAFE_componentWillMount")
         let updatedProduct = []
         for (let index = 0; index < productsList.length; index++) {
             var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
@@ -99,6 +99,25 @@ class AddInventory extends React.Component {
             employeeNameList: name,
             productsName: updatedProduct,
         })
+
+        if (refresh) {
+            this.setState({
+                totalAmount: 0,
+                finalAmount: 0,
+                advanceDetection: 0,
+                loanDetection: 0,
+                selectedProducts: [],
+                // employeeNameList: [],
+                edit: false,
+                productsName: [],
+                dateAndTime: "",
+                selectedEmployee: "",
+                inventoryItemsQty: ["1"],
+                inventoryList: [],
+                selectedPrinter: null
+            })
+        }
+
     }
 
     UNSAFE_componentWillReceiveProps(nextProps) {
@@ -443,7 +462,7 @@ class AddInventory extends React.Component {
         let products = JSON.parse(key.product)
         console.log(key, "key_dateAndTimendSaveInventory")
 
-        let inventoryItemsQty = ["1"]
+        let inventoryItemsQty = []
 
         for (let index = 0; index < products.length; index++) {
             inventoryItemsQty.push("1")
@@ -1026,7 +1045,9 @@ class AddInventory extends React.Component {
                                         alignItems: "center",
                                         borderRadius: 5,
                                         backgroundColor: "red",
-                                    }}>
+                                    }}
+                                        onPress={() => { this.UNSAFE_componentWillMount(true) }}
+                                    >
                                         <Text style={{ padding: 5, color: '#fff', fontWeight: '700' }}>New Inventory</Text>
                                     </TouchableOpacity>
                                 </View>

@@ -1,8 +1,8 @@
 const INITIAL_STATE = {
     //API's URL
-    bseUrl: "https://fathomless-citadel-43321.herokuapp.com",
+    // bseUrl: "https://fathomless-citadel-43321.herokuapp.com",
     // bseUrl: "http://192.168.43.45:3002",
-    // bseUrl: "http://192.168.10.8:3002",
+    // bseUrl: "http://192.168.10.14:3002",
     employee: [],
     employeeLoan: [],
     productsList: [],

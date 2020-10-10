@@ -1,9 +1,9 @@
 /* Employees scheema's Start */
 export const AddEmployeeSchema = {
     name: 'AddEmployee',
-    primaryKey: 'id',
+    primaryKey: 'localDbKey',
     properties: {
-        id: 'int',
+        localDbKey: 'int',
         name: 'string',
         phone: 'string',
         address: 'string',
@@ -42,9 +42,9 @@ export const localDbEmployeeKeyForUpdateMongoDbSchema = {
 /* Employee loan scheema's Start*/
 export const AddEmployeeLoanSchema = {
     name: 'AddEmployeeLoan',
-    primaryKey: 'id',
+    primaryKey: 'localDbKey',
     properties: {
-        id: 'int',
+        localDbKey: 'int',
         name: 'string',
         date: 'string',
         cnic: 'string',
@@ -83,9 +83,9 @@ export const localDbEmployeeLoanKeyForUpdateMongoDbSchema = {
 /* Add product scheema's Start */
 export const AddProductSchema = {
     name: 'AddProduct',
-    primaryKey: 'id',
+    primaryKey: 'localDbKey',
     properties: {
-        id: 'int',
+        localDbKey: 'int',
         dateAndTime: 'string',
         productName: 'string',
         productBuyingRate: 'string',
@@ -124,9 +124,9 @@ export const localDbProductKeyForUpdateMongoDbSchema = {
 /* Add expense scheema's Start */
 export const AddExpenseSchema = {
     name: 'AddExpense',
-    primaryKey: 'id',
+    primaryKey: 'localDbKey',
     properties: {
-        id: 'int',
+        localDbKey: 'int',
         dateAndTime: 'string',
         expense: 'string',
         amount: 'string',
@@ -164,9 +164,9 @@ export const localDbExpenseKeyForUpdateMongoDbSchema = {
 /* Add Inventory scheema's Start */
 export const AddInventory = {
     name: 'inventory',
-    primaryKey: 'id',
+    primaryKey: 'localDbKey',
     properties: {
-        id: 'int',
+        localDbKey: 'int',
         dateAndTime: { type: 'string', optional: true },
         employeeName: { type: 'string', optional: true },
         product: { type: 'string', optional: true },

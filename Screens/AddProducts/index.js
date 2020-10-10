@@ -127,9 +127,9 @@ class AddProducts extends Component {
         }
     }
 
-    update(key) {
+    update() {
         let { dateAndTime, productName, productratebuying, productratesalling, updateItem } = this.state
-        var key = updateItem.id
+        var key = updateItem.localDbKey
         var dateMiliSecond = moment(dateAndTime).format("x");
 
         if (dateMiliSecond != "" && productName != "" && productratebuying != "" && productratesalling != "") {
@@ -139,6 +139,7 @@ class AddProducts extends Component {
                 productBuyingRate: productratebuying,
                 productSellingRate: productratesalling,
             }
+            console.log(key, 'key___ksssssssey')
             this.props.updateProduct(key, updatePro)
             this.setState({
                 update: false,
@@ -157,7 +158,8 @@ class AddProducts extends Component {
 
     delete(key, index) {
         const { soortedProductList } = this.state
-        this.props.deleteProduct(key)
+        console.log(key, 'key_______key')
+        this.props.deleteProduct(key.localDbKey)
         soortedProductList.splice(index, 1,)
     }
 
@@ -336,6 +338,8 @@ class AddProducts extends Component {
                                                     <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Product Name"} value={""} />
                                                     {
                                                         productsName && productsName.map((key, index) => {
+
+                                                            console.log(key, 'key__key_key')
                                                             return (
                                                                 <Items style={{ fontSize: 12 }} label={key} value={key} key={index} />
                                                             )
@@ -526,9 +530,7 @@ class AddProducts extends Component {
                                                                         productratebuying: key.productBuyingRate,
                                                                         productratesalling: key.productSellingRate,
                                                                         updateItem: key,
-                                                                    }, () => {
-                                                                        console.log(productratebuying, productratesalling, "productratebuying")
-                                                                    })
+                                                                    },()=>{console.log(this.state.updateItem, 'updateItem___updateItem')})
                                                                 }}
                                                             >
                                                                 <AntDesign name="edit" style={{ color: 'green', fontWeight: 'bold', fontSize: 28, }} />
@@ -544,7 +546,7 @@ class AddProducts extends Component {
                                                                     justifyContent: "center",
                                                                     alignItems: "center"
                                                                 }}
-                                                                onPress={() => { this.delete(key.id, index) }}
+                                                                onPress={() => { this.delete(key, index) }}
                                                             >
                                                                 <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
                                                             </TouchableOpacity>

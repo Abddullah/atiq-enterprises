@@ -49,7 +49,7 @@ export default class FooterTabs extends React.Component {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.tabsView}>
-                        <TouchableOpacity onPress={() => { navigation.navigate('EmployeeRecord') }}>
+                        <TouchableOpacity onPress={() => { navigation.navigate('Report') }}>
                             <Text style={styles.tabsText}>Reports</Text>
                         </TouchableOpacity>
                     </View>

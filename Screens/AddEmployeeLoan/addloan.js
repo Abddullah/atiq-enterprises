@@ -129,7 +129,7 @@ class Addloan extends Component {
 
     update() {
         const { updateItem, sellectedItem, amount, date } = this.state
-        var id = updateItem.id
+        var id = updateItem.localDbKey
         if (sellectedItem != "" && amount != "" && date != "") {
             let updatedEmployeeloan = {
                 name: sellectedItem,
@@ -137,6 +137,7 @@ class Addloan extends Component {
                 date: date,
                 cnic: updateItem.cnic,
             }
+            console.log(updateItem, 'id__id')
             this.props.updateEmployeeLoan(id, updatedEmployeeloan)
             this.setState({
                 update: false,
@@ -341,7 +342,7 @@ class Addloan extends Component {
                                                             justifyContent: "center",
                                                             alignItems: "center"
                                                         }}
-                                                            onPress={() => { this.delete(key.id) }}
+                                                            onPress={() => { this.delete(key.localDbKey) }}
                                                         >
                                                             <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
                                                         </TouchableOpacity>

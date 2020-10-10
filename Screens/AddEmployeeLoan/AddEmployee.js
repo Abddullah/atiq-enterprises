@@ -81,7 +81,8 @@ class AddEmployee extends Component {
 
     update() {
         const { updateItem, name, phone, address, cnic } = this.state
-        var id = updateItem.id
+        var id = updateItem.localDbKey
+        console.log(updateItem, 'updateItem__updateItem')
         if (name != "" && phone != "" && address != "" && cnic != "") {
             let updatedEmployeeDetails = {
                 name: name,
@@ -98,6 +99,7 @@ class AddEmployee extends Component {
                 address: "",
                 cnic: ""
             })
+
         }
         else {
             Alert.alert("All fields are required")
@@ -105,8 +107,9 @@ class AddEmployee extends Component {
     }
 
     delete(key) {
-        // console.log(key, "DELETED_KEY")
-        this.props.deleteEmployee(key)
+        console.log(key, "DELETED_KEY")
+        this.props.deleteEmployee(key.localDbKey)
+
     }
 
     render() {
@@ -235,7 +238,7 @@ class AddEmployee extends Component {
                                                         justifyContent: "center",
                                                         alignItems: "center"
                                                     }}
-                                                        onPress={() => { this.delete(key.id) }}
+                                                        onPress={() => { this.delete(key) }}
                                                     >
                                                         <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
                                                     </TouchableOpacity>

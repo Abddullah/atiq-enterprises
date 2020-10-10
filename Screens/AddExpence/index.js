@@ -121,7 +121,8 @@ class AddExpense extends Component {
 
     update(key) {
         let { dateAndTime, expense, amount, updateItem } = this.state
-        var key = updateItem.id
+        var key = updateItem.localDbKey
+        console.log(updateItem, 'updateItem_')
         var dateMiliSecond = moment(dateAndTime).format("x");
         if (dateMiliSecond != "" && expense != "" && amount != "") {
             let updatedObj = {
@@ -129,6 +130,7 @@ class AddExpense extends Component {
                 expense: expense,
                 amount: amount,
             }
+
             this.props.updateExpense(key, updatedObj)
             this.setState({
                 update: false,
@@ -145,8 +147,9 @@ class AddExpense extends Component {
     }
 
     delete(key, index) {
+        console.log(key, 'key___key')
         const { soortedList } = this.state
-        this.props.deleteExpense(key)
+        this.props.deleteExpense(key.localDbKey)
         soortedList.splice(index, 1,)
     }
 
@@ -503,7 +506,7 @@ class AddExpense extends Component {
                                                                         justifyContent: "center",
                                                                         alignItems: "center"
                                                                     }}
-                                                                    onPress={() => { this.delete(key.id, index) }}
+                                                                    onPress={() => { this.delete(key, index) }}
                                                                 >
                                                                     <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
                                                                 </TouchableOpacity>

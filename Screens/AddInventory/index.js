@@ -12,6 +12,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto'
 // store
 import { connect } from "react-redux";
 import { saveInventorys, deleteInventory, updateInventorys } from '../../store/action/action';
+import RNPrint from 'react-native-print';
 
 class AddInventory extends React.Component {
     constructor() {
@@ -27,15 +28,53 @@ class AddInventory extends React.Component {
             dateAndTime: "",
             selectedEmployee: "",
             inventoryItemsQty: ["1"],
-            inventoryList: []
-
+            inventoryList: [],
+            selectedPrinter: null
         }
     }
 
+    async printHTML() {
+        const { dateAndTime, selectedEmployee, product, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount } = this.state
+        console.log(product, 'dateAndTime__dateAndTime')
+        await RNPrint.print({
+            html: ` 
+                <div style="display: flex;  flex-direction: row; padding-left: 20px ">
+                    <h2 style=" margin-right: 20px " >Date: ${dateAndTime}</h2>
+                    <h2 style="">Employee: ${selectedEmployee}</h2>
+                </div>
+                <div style="display: flex;  flex-direction: row; padding-left: 20px ">
+                    <h2 style=" margin-right: 20px " >Weight: ${product[0].waight}</h2>
+                    <h2 style=" margin-right: 20px " >Rate: ${product[0].rate}</h2>
+                    <h2 style="">SaleRate: ${product[0].saleRate}</h2>
+                </div>
+                <div style="padding-left: 20px">
+                <h2 style="">Products: ${product[0].productName}</h2>
+                <h2 style="">Total Amount: ${totalAmount}</h2>
+                <h2 style="">Advance Detection: ${advanceDetection}</h2>
+                <h2 style="">Loan Detection: ${loanDetection}</h2>
+                <h2 style="">Final Amount: ${finalAmount}</h2>
+                </div>
+            `
+
+        })
+    }
+
+
+    // async printPDF() {
+    //     const results = await RNHTMLtoPDF.convert({
+    //         html: '<h1>Custom converted PDF Document</h1>',
+    //         fileName: 'test',
+    //         base64: true,
+    //     })
+    //     console.log(results, 'results____resultsPrint')
+
+    //     await RNPrint.print({ filePath: results.filePath })
+    // }
 
     UNSAFE_componentWillMount() {
         const { employee, productsList, inventoryList } = this.props
-        // console.log(productsList, "UNSAFE_componentWillMount")
+        console.log(productsList, "UNSADDDDDomponentWillMount")
+
         let updatedProduct = []
         for (let index = 0; index < productsList.length; index++) {
             var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
@@ -47,6 +86,9 @@ class AddInventory extends React.Component {
                 updatedProduct.push(indProduct[0])
             }
         }
+        console.log(updatedProduct, 'updatedProduct___')
+
+
         var name = []
         if (employee && employee.length) {
             employee.map((key, index) => {
@@ -61,7 +103,8 @@ class AddInventory extends React.Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         const { employee, productsList, inventoryList } = nextProps
-        console.log(inventoryList, "UNSAFE_componentWillReceiveProps")
+        console.log(productsList, "UNSAFE_componentWillReceiveProps")
+
         let updatedProduct = []
         for (let index = 0; index < productsList.length; index++) {
             var updatedProductChk = updatedProduct.filter(product => product.productName === productsList[index].productName);
@@ -73,6 +116,8 @@ class AddInventory extends React.Component {
                 updatedProduct.push(indProduct[0])
             }
         }
+        console.log(updatedProduct, 'updatedProduct___')
+
         var name = []
         if (employee && employee.length) {
             employee.map((key, index) => {
@@ -102,14 +147,17 @@ class AddInventory extends React.Component {
     setSelectedValue(itemValue, itemIndex) {
         const { productsName } = this.state
         var soortedData = productsName.filter(product => product.productName === itemValue);
+        console.log(soortedData, "soortedData")
         this.setState({
             [`selectedProduct${itemIndex}`]: itemValue,
-            [`rate${itemIndex}`]: soortedData[0].productSellingRate,
+            [`rate${itemIndex}`]: soortedData[0].productBuyingRate,
+            [`rateSaleRate${itemIndex}`]: soortedData[0].productSellingRate,
         })
     }
 
     addExtraField() {
-        let { inventoryItemsQty, } = this.state
+        let { inventoryItemsQty, selectedProducts } = this.state
+        console.log(selectedProducts, 'product__product')
         inventoryItemsQty.push("1")
         this.setState({ inventoryItemsQty, inventoryItemsQty });
     }
@@ -173,17 +221,22 @@ class AddInventory extends React.Component {
 
 
     createProductObject(index) {
-        let { selectedProducts, advanceDetection, loanDetection } = this.state
+        let { selectedProducts, advanceDetection, loanDetection, dateAndTime } = this.state
         let totalAmount = 0
         let productName = this.state[`selectedProduct${index}`];
         let weight = this.state[`weight${index}`];
         let rate = this.state[`rate${index}`]
+        let sale = this.state[`rateSaleRate${index}`]
         let amount = this.state[`amount${index}`];
+        var dateMiliSecond = moment(dateAndTime).format("x");
+
         let productObj = {
             productName: productName,
             waight: weight,
             rate: rate,
+            saleRate: sale,
             amount: amount,
+            dateAndTime: dateMiliSecond
         }
         if (selectedProducts[index]) {
             selectedProducts.splice(index, 1)
@@ -272,71 +325,99 @@ class AddInventory extends React.Component {
     updateInventory() {
         let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
-        let cloneObject = {
-            dateAndTime: dateMiliSecond,
-            employeeName: selectedEmployee,
-            product: JSON.stringify(selectedProducts),
-            totalAmount: totalAmount,
-            advanceDetection: Number(advanceDetection),
-            loanDetection: Number(loanDetection),
-            finalAmount: finalAmount,
-            id: localDbKey
+        console.log(localDbKey, 'localDbKddey___localDbKey')
+
+        if (dateAndTime == '') {
+            Alert.alert('', 'Please select date and time')
         }
-        this.props.updateInventorys(localDbKey, cloneObject)
-        this.setState({
-            inventoryList: [],
-            selectedProducts: [],
-            dateAndTime: "",
-            inventoryListTime: "",
-            employeeName: "",
-            product: "",
-            totalAmount: 0,
-            advanceDetection: 0,
-            loanDetection: 0,
-            finalAmount: 0,
-            selectedEmployee: "",
-            inventoryItemsQty: ["1"],
-            todaytotalAmount: '',
-            edit: false,
-            [`selectedProduct${0}`]: '',
-            [`weight${0}`]: '',
-            [`rate${0}`]: '',
-            [`amount${0}`]: '',
-        })
+        else if (selectedEmployee == '') {
+            Alert.alert('', 'Please select employee name')
+        }
+        else if (selectedEmployee == '') {
+            Alert.alert('', 'Please select products name')
+        }
+        else {
+
+            let cloneObject = {
+                dateAndTime: dateMiliSecond,
+                employeeName: selectedEmployee,
+                product: JSON.stringify(selectedProducts),
+                totalAmount: totalAmount,
+                advanceDetection: Number(advanceDetection),
+                loanDetection: Number(loanDetection),
+                finalAmount: finalAmount,
+                id: localDbKey
+            }
+
+            this.props.updateInventorys(localDbKey, cloneObject)
+            this.setState({
+                selectedIndex: '',
+                inventoryList: [],
+                selectedProducts: [],
+                dateAndTime: "",
+                inventoryListTime: "",
+                employeeName: "",
+                product: "",
+                totalAmount: 0,
+                advanceDetection: 0,
+                loanDetection: 0,
+                finalAmount: 0,
+                selectedEmployee: "",
+                inventoryItemsQty: ["1"],
+                todaytotalAmount: '',
+                edit: false,
+                [`selectedProduct${0}`]: '',
+                [`weight${0}`]: '',
+                [`rate${0}`]: '',
+                [`amount${0}`]: '',
+            })
+        }
     }
 
     saveInventory() {
         let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
-        let cloneObject = {
-            dateAndTime: dateMiliSecond,
-            employeeName: selectedEmployee,
-            product: JSON.stringify(selectedProducts),
-            totalAmount: totalAmount,
-            advanceDetection: Number(advanceDetection),
-            loanDetection: Number(loanDetection),
-            finalAmount: finalAmount,
-            id: parseInt(Date.now() + dateAndTime)
+        if (dateAndTime == '') {
+            Alert.alert('', 'Please select date and time')
         }
-        this.props.saveInventorys(cloneObject)
-        this.setState({
-            dateAndTime: "",
-            employeeName: "",
-            inventoryListTime: "",
-            product: "",
-            totalAmount: 0,
-            advanceDetection: 0,
-            loanDetection: 0,
-            finalAmount: 0,
-            selectedEmployee: "",
-            inventoryItemsQty: ["1"],
-            selectedProducts: [],
-            todaytotalAmount: '',
-            [`selectedProduct${0}`]: '',
-            [`weight${0}`]: '',
-            [`rate${0}`]: '',
-            [`amount${0}`]: '',
-        })
+        else if (selectedEmployee == '') {
+            Alert.alert('', 'Please select employee name')
+        }
+        else if (selectedEmployee == '') {
+            Alert.alert('', 'Please select products name')
+        }
+        else {
+
+            let cloneObject = {
+                dateAndTime: dateMiliSecond,
+                employeeName: selectedEmployee,
+                product: JSON.stringify(selectedProducts),
+                totalAmount: totalAmount,
+                advanceDetection: Number(advanceDetection),
+                loanDetection: Number(loanDetection),
+                finalAmount: finalAmount,
+                id: parseInt(Date.now() + dateAndTime)
+            }
+            this.props.saveInventorys(cloneObject)
+            this.setState({
+                dateAndTime: "",
+                employeeName: "",
+                inventoryListTime: "",
+                product: "",
+                totalAmount: 0,
+                advanceDetection: 0,
+                loanDetection: 0,
+                finalAmount: 0,
+                selectedEmployee: "",
+                inventoryItemsQty: ["1"],
+                selectedProducts: [],
+                todaytotalAmount: '',
+                [`selectedProduct${0}`]: '',
+                [`weight${0}`]: '',
+                [`rate${0}`]: '',
+                [`amount${0}`]: '',
+            })
+        }
     }
 
     deleteInventory() {
@@ -358,6 +439,7 @@ class AddInventory extends React.Component {
     }
 
     setAndSaveInventory(key, index) {
+
         let products = JSON.parse(key.product)
         console.log(key, "key_dateAndTimendSaveInventory")
 
@@ -380,7 +462,7 @@ class AddInventory extends React.Component {
         this.setState({
             selectedIndex: index,
             edit: true,
-            localDbKey: key.id,
+            localDbKey: key.localDbKey,
             dateAndTime: moment(Number(key.dateAndTime)).format("YYYY-MM-DD"),
             selectedEmployee: key.employeeName,
             product: products,
@@ -401,9 +483,9 @@ class AddInventory extends React.Component {
         const { employeeNameList, productsName, dateAndTime,
             selectedEmployee, inventoryItemsQty, totalAmount,
             finalAmount, inventoryListTime, selectedProducts,
-            todaytotalAmount, inventoryList, edit, loader, selectedIndex
+            todaytotalAmount, inventoryList, edit, loader, selectedIndex, updatedProduct
         } = this.state
-        console.log(inventoryList, "Render_console")
+        console.log(this.state.productsName, "updatedProduct__Render_console")
 
         return (
             <AppContainer pageName={'Add Inventory'} navigation={this.props.navigation} >
@@ -727,6 +809,7 @@ class AddInventory extends React.Component {
                                                     backgroundColor: '#003366',
                                                     marginLeft: "2%"
                                                 }}
+                                                onPress={() => { this.printHTML() }}
                                             >
                                                 <Text
                                                     style={{
@@ -920,7 +1003,7 @@ class AddInventory extends React.Component {
                                                 <TouchableOpacity style={{ height: 40, justifyContent: "center", marginTop: 10, backgroundColor: "#063767" }}
                                                     onPress={() => { this.setAndSaveInventory(key, index) }}
                                                 >
-                                                    <Text style={{ padding: 5, color: selectedIndex == index ? '#063767' : '#fff', backgroundColor: selectedIndex == index ? '#fff' : null, fontWeight: '700' }}>{key.employeeName}</Text>
+                                                    <Text style={{ padding: 5, color: selectedIndex !== '' && selectedIndex == index ? '#063767' : '#fff', backgroundColor: selectedIndex !== '' && selectedIndex == index ? '#fff' : null, fontWeight: '700' }}>{key.employeeName}</Text>
                                                 </TouchableOpacity>
                                             )
                                         })

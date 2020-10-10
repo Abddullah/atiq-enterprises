@@ -2,7 +2,13 @@ import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image, } from 'react-native';
 // import Logo from '../../component/logo'
 import { connect } from "react-redux";
-import { getEmployee, getEmployeeLoan, getProducts, getExpense, getInventory } from '../../store/action/action';
+import {
+    getEmployee, updateEmployeeSplash, deleteEmployeeSplash,
+    getEmployeeLoan, updateEmployeeLoanSplash, deleteEmployeeLoanSplash,
+    getProducts, updateProductSplash, deleteProductSplash,
+    getExpense, updateExpenseSplash, deleteExpenseSplash,
+    getInventory, updateInventorySplash, deleteInventorySplash
+} from '../../store/action/action';
 
 
 class AuthLoading extends React.Component {
@@ -12,12 +18,35 @@ class AuthLoading extends React.Component {
 
     componentDidMount() {
         // console.log('sssssssssssss')
+        this.props.deleteEmployeeSplash(this.props.navigation)
+        this.props.updateEmployeeSplash(this.props.navigation)
         this.props.getEmployee(this.props.navigation)
+        
+
+        this.props.deleteEmployeeLoanSplash(this.props.navigation)
+        this.props.updateEmployeeLoanSplash(this.props.navigation)
         this.props.getEmployeeLoan(this.props.navigation)
+
+
+        this.props.deleteProductSplash(this.props.navigation)
+        this.props.updateProductSplash(this.props.navigation)
         this.props.getProducts(this.props.navigation)
+
+
+        this.props.deleteExpenseSplash(this.props.navigation)
+        this.props.updateExpenseSplash(this.props.navigation)
         this.props.getExpense(this.props.navigation)
+
+
+
+
+        this.props.deleteInventorySplash(this.props.navigation)
+        this.props.updateInventorySplash(this.props.navigation)
         this.props.getInventory(this.props.navigation)
 
+
+        
+        // this.props.getEmployeeWithKey()
         // if (user) {
         //     // User is signed in.
         //     this.props.navigation.navigate('AppStackUser');
@@ -91,18 +120,57 @@ function mapDispatchToProps(dispatch) {
         getEmployee: (navigation) => {
             dispatch(getEmployee(navigation))
         },
+        updateEmployeeSplash: (navigation) => {
+            dispatch(updateEmployeeSplash(navigation))
+        },
+        deleteEmployeeSplash: (navigation) => {
+            dispatch(deleteEmployeeSplash(navigation))
+        },
+
+
         getEmployeeLoan: (navigation) => {
             dispatch(getEmployeeLoan(navigation))
         },
+        updateEmployeeLoanSplash: (navigation) => {
+            dispatch(updateEmployeeLoanSplash(navigation))
+        },
+        deleteEmployeeLoanSplash: (navigation) => {
+            dispatch(deleteEmployeeLoanSplash(navigation))
+        },
+
+
         getProducts: (navigation) => {
             dispatch(getProducts(navigation))
         },
+        updateProductSplash: (navigation) => {
+            dispatch(updateProductSplash(navigation))
+        },
+        deleteProductSplash: (navigation) => {
+            dispatch(deleteProductSplash(navigation))
+        },
+
+
         getExpense: (navigation) => {
             dispatch(getExpense(navigation))
         },
+        updateExpenseSplash: (navigation) => {
+            dispatch(updateExpenseSplash(navigation))
+        },
+        deleteExpenseSplash: (navigation) => {
+            dispatch(deleteExpenseSplash(navigation))
+        },
+
+
         getInventory: (navigation) => {
             dispatch(getInventory(navigation))
         },
+        updateInventorySplash: (navigation) => {
+            dispatch(updateInventorySplash(navigation))
+        },
+        deleteInventorySplash: (navigation) => {
+            dispatch(deleteInventorySplash(navigation))
+        },
+        
     })
 }
 

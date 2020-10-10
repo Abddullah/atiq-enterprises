@@ -188,7 +188,7 @@ class EmployeeRecord extends React.Component {
                                             }
                                         </Picker>
                                     </View>
-                                    <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#003366', padding: "2%", flex: 0.5 }} onPress={() => { this.search() }}>
+                                    <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#003366', justifyContent: "center", alignItems: "center", flex: 0.5 }} onPress={() => { this.search() }}>
                                         <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff', fontSize: 16 }}>Search</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -196,18 +196,18 @@ class EmployeeRecord extends React.Component {
                                 {/* <Text style={styles.productNameText}>Record</Text> */}
                                 {/* <Text style={styles.searchDateText}>Employee Name     ABC</Text> */}
 
-                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', borderBottomWidth: 0.5, justifyContent: 'center', paddingHorizontal: 10 }}>
 
 
-                                    <View style={{ flex: 3 }}>
-                                        <Text style={styles.text}>Date</Text>
+                                    <View style={{ flex: 3, marginBottom: 15, }}>
+                                        <Text style={{ fontWeight: "bold" }}>Date</Text>
                                     </View>
-                                    <View style={{ flex: 1 }}>
-                                        <Text style={styles.text}>Loan</Text>
+                                    <View style={{ flex: 1, marginBottom: 15, }}>
+                                        <Text style={{ fontWeight: "bold" }}>Loan</Text>
 
                                     </View>
-                                    <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                                        <Text style={styles.text}>Minus Loan</Text>
+                                    <View style={{ flex: 1, marginBottom: 15, alignItems: 'flex-end' }}>
+                                        <Text style={{ fontWeight: "bold" }}>Minus Loan</Text>
 
                                     </View>
 
@@ -287,7 +287,7 @@ class EmployeeRecord extends React.Component {
                     </View>
                 </View>
                 {/* </AppContainer> */}
-            </View>
+            </View >
         )
     }
 }
@@ -321,9 +321,12 @@ const styles = StyleSheet.create({
     },
     searchByView: {
         display: 'flex',
+        height: 50,
         flexDirection: 'row',
         width: "100%",
-        marginVertical: 20
+        marginVertical: 20,
+        // backgroundColor: "red",
+
     },
     dateFrom: {
         borderWidth: 1,

@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
         height: "100%",
         width: "100%",
         alignItems: 'center',
-        // backgroundColor: "green"
+        backgroundColor: "white"
     },
     addExpenseForm: {
         display: 'flex',

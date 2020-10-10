@@ -141,6 +141,7 @@ class Addloan extends Component {
             this.props.updateEmployeeLoan(id, updatedEmployeeloan)
             this.setState({
                 update: false,
+                updateLoan: false,
                 sellectedItem: 'Select Employee Name',
                 employeeNameIndex: null,
                 employeeNameList: [],

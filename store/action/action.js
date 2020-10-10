@@ -54,6 +54,8 @@ export function getEmployee(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_Employee_data_from_local_DB');
+                        alert(error)
+
                     });
             }
             else {
@@ -120,8 +122,9 @@ export function getEmployee(navigation) {
                                                                 })
                                                                 .catch(err => {
                                                                     let error = JSON.parse(JSON.stringify(err))
-                                                                    console.log(error, err, 'Error_result___result')
-                                                                    alert(error.message)
+                                                                    console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                                                    alert(error.message + error.config.url)
+
                                                                 })
                                                         });
                                                         realm.close();
@@ -134,12 +137,14 @@ export function getEmployee(navigation) {
                                             .catch(err => {
                                                 let error = JSON.parse(JSON.stringify(err))
                                                 console.log(error, err, 'Error_addEmployee_to_MongoDb')
-                                                alert(error.message)
+                                                alert(error.message + error.config.url)
+
                                             })
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -158,8 +163,8 @@ export function getEmployee(navigation) {
                                 })
                                 .catch(err => {
                                     let error = JSON.parse(JSON.stringify(err))
-                                    console.log(error, err, 'Error_result___result')
-                                    alert(error.message)
+                                    console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                    alert(error.message + error.config.url)
                                 })
                         }
 
@@ -167,6 +172,7 @@ export function getEmployee(navigation) {
 
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
 
             }
@@ -231,18 +237,21 @@ export function updateEmployeeSplash(navigation) {
                                                         })
                                                         .catch(function (error) {
                                                             console.log(error, 'Error_update_employee_to_local_DB');
+                                                            alert(error)
                                                         });
                                                 })
                                                 .catch(err => {
                                                     let error = JSON.parse(JSON.stringify(err))
                                                     console.log(error, err, 'Error_update_employee_to_MongoDb',)
-                                                    alert(error.message)
+                                                    alert(error.message + error.config.url)
+
                                                 })
                                         })
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -250,6 +259,7 @@ export function updateEmployeeSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -299,18 +309,21 @@ export function deleteEmployeeSplash(navigation) {
                                             })
                                             .catch(function (error) {
                                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                                alert(error)
                                             });
                                     })
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_delete_employee_to_MongoDb')
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
                             })
                         }
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -334,6 +347,7 @@ export function getEmployeeLoan(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -410,7 +424,8 @@ export function getEmployeeLoan(navigation) {
                                                                         .catch(err => {
                                                                             let error = JSON.parse(JSON.stringify(err))
                                                                             console.log(error, err, 'Error_result___result')
-                                                                            alert(error.message)
+                                                                            alert(error.message + error.config.url)
+
                                                                         })
                                                                 });
                                                                 realm.close();
@@ -423,13 +438,15 @@ export function getEmployeeLoan(navigation) {
                                                     .catch(err => {
                                                         let error = JSON.parse(JSON.stringify(err))
                                                         console.log(error, err, 'Error_addEmployee_to_MongoDb')
-                                                        alert(error.message)
+                                                        alert(error.message + error.config.url)
+
                                                     })
                                                 realm.close();
                                             });
                                         })
                                         .catch(function (error) {
                                             console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                            alert(error)
                                         });
                                 })
                             }
@@ -449,7 +466,8 @@ export function getEmployeeLoan(navigation) {
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_result___result')
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
                             }
                         })
@@ -457,6 +475,7 @@ export function getEmployeeLoan(navigation) {
 
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -519,12 +538,14 @@ export function updateEmployeeLoanSplash(navigation) {
                                                         })
                                                         .catch(function (error) {
                                                             console.log(error, 'Error_update_employee_to_local_DB');
+                                                            alert(error)
                                                         });
                                                 })
                                                 .catch(err => {
                                                     let error = JSON.parse(JSON.stringify(err))
                                                     console.log(error, err, "Error_update_employee_loan_to_Mongo_DB")
-                                                    alert(error.message)
+                                                    alert(error.message + error.config.url)
+
                                                 })
                                             // }
                                             // });
@@ -533,12 +554,14 @@ export function updateEmployeeLoanSplash(navigation) {
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -590,12 +613,14 @@ export function deleteEmployeeLoanSplash(navigation) {
                                             })
                                             .catch(function (error) {
                                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                                alert(error)
                                             });
                                     })
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_delete_employee_loan_to_MongoDb',)
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
 
                             })
@@ -603,6 +628,7 @@ export function deleteEmployeeLoanSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -627,6 +653,7 @@ export function getProducts(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -691,25 +718,29 @@ export function getProducts(navigation) {
                                                             .catch(err => {
                                                                 let error = JSON.parse(JSON.stringify(err))
                                                                 console.log(error, err, 'Error_result___result')
-                                                                alert(error.message)
+                                                                alert(error.message + error.config.url)
+
                                                             })
                                                         realm.close();
                                                     })
                                                     .catch(function (error) {
                                                         console.log(error, 'Error_AddProduct_key_to-local_DB');
+                                                        alert(error)
                                                     });
 
                                             })
                                             .catch(err => {
                                                 let error = JSON.parse(JSON.stringify(err))
                                                 console.log(error, err, 'Error_addProduct_to_MongoDb')
-                                                alert(error.message)
+                                                alert(error.message + error.config.url)
+
                                             })
 
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -729,12 +760,14 @@ export function getProducts(navigation) {
                                 .catch(err => {
                                     let error = JSON.parse(JSON.stringify(err))
                                     console.log(error, err, 'Error_result___result')
-                                    alert(error.message)
+                                    alert(error.message + error.config.url)
+
                                 })
                         }
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -797,18 +830,21 @@ export function updateProductSplash(navigation) {
                                                         })
                                                         .catch(function (error) {
                                                             console.log(error, 'Error_update_employee_to_local_DB');
+                                                            alert(error)
                                                         });
                                                 })
                                                 .catch(err => {
                                                     let error = JSON.parse(JSON.stringify(err))
                                                     console.log(error, err, 'Error_update_employee_to_MongoDb',)
-                                                    alert(error.message)
+                                                    alert(error.message + error.config.url)
+
                                                 })
                                         })
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -816,6 +852,7 @@ export function updateProductSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -866,12 +903,14 @@ export function deleteProductSplash(navigation) {
                                             })
                                             .catch(function (error) {
                                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                                alert(error)
                                             });
                                     })
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_delete_employee_loan_to_MongoDb',)
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
 
                             })
@@ -879,6 +918,7 @@ export function deleteProductSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -902,6 +942,7 @@ export function getExpense(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_Expense_data_from_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -964,25 +1005,29 @@ export function getExpense(navigation) {
                                                             .catch(err => {
                                                                 let error = JSON.parse(JSON.stringify(err))
                                                                 console.log(error, err, 'Error_result___result')
-                                                                // alert(error.message)
+                                                                //                                     alert(error.message + error.config.url)
+
                                                             })
                                                         realm.close();
                                                     })
                                                     .catch(function (error) {
                                                         console.log(error, 'Error_AddProduct_key_to-local_DB');
+                                                        alert(error)
                                                     });
 
                                             })
                                             .catch(err => {
                                                 let error = JSON.parse(JSON.stringify(err))
                                                 console.log(error, err, 'Error_addProduct_to_MongoDb')
-                                                alert(error.message)
+                                                alert(error.message + error.config.url)
+
                                             })
 
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -1001,13 +1046,15 @@ export function getExpense(navigation) {
                                 .catch(err => {
                                     let error = JSON.parse(JSON.stringify(err))
                                     console.log(error, err, 'Error_result___result')
-                                    // alert(error.message)
+                                    //                                     alert(error.message + error.config.url)
+
                                 })
                         }
                     })
 
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1072,18 +1119,21 @@ export function updateExpenseSplash(navigation) {
                                                         })
                                                         .catch(function (error) {
                                                             console.log(error, 'Error_update_employee_to_local_DB');
+                                                            alert(error)
                                                         });
                                                 })
                                                 .catch(err => {
                                                     let error = JSON.parse(JSON.stringify(err))
                                                     console.log(error, err, 'Error_update_employee_to_MongoDb',)
-                                                    alert(error.message)
+                                                    alert(error.message + error.config.url)
+
                                                 })
                                         })
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -1091,6 +1141,7 @@ export function updateExpenseSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1136,12 +1187,14 @@ export function deleteExpenseSplash(navigation) {
                                             })
                                             .catch(function (error) {
                                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                                alert(error)
                                             });
                                     })
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_delete_employee_loan_to_MongoDb',)
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
 
                             })
@@ -1149,6 +1202,7 @@ export function deleteExpenseSplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1172,6 +1226,7 @@ export function getInventory(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_Inventory_data_from_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -1236,25 +1291,29 @@ export function getInventory(navigation) {
                                                             .catch(err => {
                                                                 let error = JSON.parse(JSON.stringify(err))
                                                                 console.log(error, err, 'Error_result___result')
-                                                                // alert(error.message)
+                                                                //                                     alert(error.message + error.config.url)
+
                                                             })
                                                         realm.close();
                                                     })
                                                     .catch(function (error) {
                                                         console.log(error, 'Error_AddProduct_key_to-local_DB');
+                                                        alert(error)
                                                     });
 
                                             })
                                             .catch(err => {
                                                 let error = JSON.parse(JSON.stringify(err))
                                                 console.log(error, err, 'Error_addProduct_to_MongoDb')
-                                                alert(error.message)
+                                                alert(error.message + error.config.url)
+
                                             })
 
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Deletedddd_Inventory');
+                                        alert(error)
                                     });
                             })
                         }
@@ -1273,7 +1332,8 @@ export function getInventory(navigation) {
                                 .catch(err => {
                                     let error = JSON.parse(JSON.stringify(err))
                                     console.log(error, err, 'Error_result___result')
-                                    // alert(error.message)
+                                    //                                     alert(error.message + error.config.url)
+
                                 })
                         }
 
@@ -1282,6 +1342,7 @@ export function getInventory(navigation) {
 
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1349,18 +1410,21 @@ export function updateInventorySplash(navigation) {
                                                         })
                                                         .catch(function (error) {
                                                             console.log(error, 'Error_update_employee_to_local_DB');
+                                                            alert(error)
                                                         });
                                                 })
                                                 .catch(err => {
                                                     let error = JSON.parse(JSON.stringify(err))
                                                     console.log(error, err, 'Error_update_employee_to_MongoDb',)
-                                                    alert(error.message)
+                                                    alert(error.message + error.config.url)
+
                                                 })
                                         })
                                         realm.close();
                                     })
                                     .catch(function (error) {
                                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                                        alert(error)
                                     });
                             })
                         }
@@ -1368,6 +1432,7 @@ export function updateInventorySplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1414,12 +1479,14 @@ export function deleteInventorySplash(navigation) {
                                             })
                                             .catch(function (error) {
                                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                                alert(error)
                                             });
                                     })
                                     .catch(err => {
                                         let error = JSON.parse(JSON.stringify(err))
                                         console.log(error, err, 'Error_delete_employee_loan_to_MongoDb',)
-                                        alert(error.message)
+                                        alert(error.message + error.config.url)
+
                                     })
 
                             })
@@ -1427,6 +1494,7 @@ export function deleteInventorySplash(navigation) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_data_from_local_DB');
+                        alert(error)
                     });
             }
         });
@@ -1462,6 +1530,7 @@ export function addEmployee(newEmployee) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddEmployee_to_local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeKeyForSaveMongoDbSchema] })
@@ -1478,6 +1547,7 @@ export function addEmployee(newEmployee) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddEmployee_key_to-local_DB');
+                        alert(error)
                     });
 
             }
@@ -1528,7 +1598,8 @@ export function addEmployee(newEmployee) {
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_addEmployee_to_MongoDb')
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1554,6 +1625,7 @@ export function deleteEmployee(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Delete_Employee_to-local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeKeyForDeleteMongoDbSchema] })
@@ -1570,6 +1642,7 @@ export function deleteEmployee(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_delete_Employee_key_to_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -1605,12 +1678,14 @@ export function deleteEmployee(key) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Delete_Employee_to-local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_delete_employee_to_MongoDb')
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1635,6 +1710,7 @@ export function updateEmployee(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Employee_to-local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeKeyForUpdateMongoDbSchema] })
@@ -1651,6 +1727,7 @@ export function updateEmployee(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_employee_to_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -1689,12 +1766,14 @@ export function updateEmployee(key, updateData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_update_employee_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_update_employee_to_MongoDb',)
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1726,6 +1805,7 @@ export function addEmployeeLoan(newEmployeeloan) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddEmployee_loan_to_local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeLoanKeyForSaveMongoDbSchema] })
@@ -1742,6 +1822,7 @@ export function addEmployeeLoan(newEmployeeloan) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddEmployee_loan_key_to-local_DB');
+                        alert(error)
                     });
 
             }
@@ -1792,7 +1873,8 @@ export function addEmployeeLoan(newEmployeeloan) {
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, "Error_AddEmployee_loan_to_MongoDb")
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1800,6 +1882,24 @@ export function addEmployeeLoan(newEmployeeloan) {
 }
 export function deleteEmployeeLoan(key) {
     return dispatch => {
+        console.log(key, "Error_delete_employee_key")
+        // Realm.open({ schema: [AddEmployeeLoanSchema] })
+        //     .then(realm => {
+        //         realm.write(() => {
+        //             const deleteById = realm.objectForPrimaryKey('AddEmployeeLoan', Number(key));
+        //             realm.delete(deleteById);
+        //             const deletedEmployee = realm.objects('AddEmployeeLoan')
+        //             let myJSON = JSON.parse(JSON.stringify(deletedEmployee))
+        //             console.log(myJSON, 'After_delete_employee')
+        //             dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+        //         })
+        //         realm.close();
+        //     })
+        //     .catch(function (error) {
+        //         console.log(error, 'Error_delete_employee_loan_to_local_DB');
+        // alert(error)
+        //     });
+
         NetInfo.fetch().then(state => {
             if (!state.isConnected) {
                 // delete data from local db
@@ -1817,6 +1917,7 @@ export function deleteEmployeeLoan(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_delete_Employee_loan_to-local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeLoanKeyForDeleteMongoDbSchema] })
@@ -1868,12 +1969,14 @@ export function deleteEmployeeLoan(key) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_delete_employee_loan_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_delete_employee_loan_to_MongoDb',)
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1899,6 +2002,7 @@ export function updateEmployeeLoan(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Employee_loan_to-local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbEmployeeLoanKeyForUpdateMongoDbSchema] })
@@ -1915,6 +2019,7 @@ export function updateEmployeeLoan(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_employee_loan_to_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -1953,12 +2058,14 @@ export function updateEmployeeLoan(key, updateData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_update_employee_loan_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, "Error_update_employee_loan_to_Mongo_DB")
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -1992,6 +2099,7 @@ export function addProduct(productData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddProduct_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2009,6 +2117,7 @@ export function addProduct(productData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_AddProduct_key_to-local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -2053,12 +2162,14 @@ export function addProduct(productData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_AddProduct_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_addProduct_to_MongoDb')
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2084,6 +2195,7 @@ export function deleteProduct(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Delete_Product_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2136,12 +2248,14 @@ export function deleteProduct(key) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Delete_Product_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_delete_product_to_MongoDb',)
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2172,6 +2286,7 @@ export function updateProduct(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Product_to_local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbProductKeyForUpdateMongoDbSchema] })
@@ -2188,6 +2303,7 @@ export function updateProduct(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_product_to_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -2232,12 +2348,14 @@ export function updateProduct(key, updateData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Update_Product_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, "Error_update_product_to_Mongo_DB")
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2270,6 +2388,7 @@ export function addExpense(getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Add_Expense_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2287,6 +2406,7 @@ export function addExpense(getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Expense_key_Save_to-local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -2330,12 +2450,14 @@ export function addExpense(getData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Add_Expense_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_Add_Expense_to_MongoDb')
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2360,6 +2482,7 @@ export function deleteExpense(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Delete_Expense_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2412,12 +2535,14 @@ export function deleteExpense(key) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Delete_Expense_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_delete_expense_to_MongoDb',)
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2447,6 +2572,7 @@ export function updateExpense(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Expense_to_local_DB');
+                        alert(error)
                     });
                 // save key to local db
                 Realm.open({ schema: [localDbExpenseKeyForUpdateMongoDbSchema] })
@@ -2463,6 +2589,7 @@ export function updateExpense(key, updateData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_Expense_Key_to_local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -2505,12 +2632,14 @@ export function updateExpense(key, updateData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_update_Expense_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, "Error_update_expense_to_Mongo_DB")
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2539,6 +2668,7 @@ export function saveInventorys(getData) {
         //     })
         //     .catch(function (error) {
         //         console.log(error, 'Error_Add_Inventory_to_local_DB');
+        // alert(error)
         //     });
 
         NetInfo.fetch().then(state => {
@@ -2567,6 +2697,7 @@ export function saveInventorys(getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Add_Inventory_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2585,6 +2716,7 @@ export function saveInventorys(getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Inventory_key_Save_to-local_DB');
+                        alert(error)
                     });
             }
             else {
@@ -2635,12 +2767,14 @@ export function saveInventorys(getData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Add_Inventory_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_Add_Inventory_to_MongoDb')
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2667,6 +2801,7 @@ export function deleteInventory(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Delete_Inventory_From_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2720,12 +2855,14 @@ export function deleteInventory(key) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Delete_Inventory_From_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, 'Error_delete_inventory_to_MongoDb',)
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });
@@ -2759,6 +2896,7 @@ export function updateInventorys(key, getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Expense_to_local_DB');
+                        alert(error)
                     });
 
                 // save key to local db
@@ -2776,6 +2914,7 @@ export function updateInventorys(key, getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_Inventory_Key_to_local_DB');
+                        alert(error)
                     });
 
             }
@@ -2827,12 +2966,14 @@ export function updateInventorys(key, getData) {
                             })
                             .catch(function (error) {
                                 console.log(error, 'Error_Update_Inventory_to_local_DB');
+                                alert(error)
                             });
                     })
                     .catch(err => {
                         let error = JSON.parse(JSON.stringify(err))
                         console.log(error, err, "Error_update_Inventory_to_Mongo_DB")
-                        alert(error.message)
+                        alert(error.message + error.config.url)
+
                     })
             }
         });

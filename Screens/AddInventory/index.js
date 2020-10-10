@@ -440,10 +440,12 @@ class AddInventory extends React.Component {
     }
 
     deleteInventory() {
-        let { localDbKey } = this.state
-        console.log(localDbKey, 'localDbKey')
+
+        let { localDbKey, inventoryList, selectedIndex } = this.state
+        inventoryList.splice(selectedIndex, 1)
         this.props.deleteInventory(localDbKey)
         this.setState({
+            inventoryList,
             dateAndTime: "",
             employeeName: "",
             product: "",
@@ -454,10 +456,17 @@ class AddInventory extends React.Component {
             selectedEmployee: "",
             inventoryItemsQty: ["1"],
             selectedProducts: [],
+            selectedIndex: '',
+            edit: false,
+            [`selectedProduct${0}`]: '',
+            [`weight${0}`]: '',
+            [`rate${0}`]: '',
+            [`amount${0}`]: '',
         })
     }
 
     setAndSaveInventory(key, index) {
+
 
         let products = JSON.parse(key.product)
         console.log(key, "key_dateAndTimendSaveInventory")

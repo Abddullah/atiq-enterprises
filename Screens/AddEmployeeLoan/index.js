@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import AddEmployee from '../../Screens/AddEmployeeLoan/AddEmployee'
 import Addloan from '../../Screens/AddEmployeeLoan/addloan'
 import SearchEmployeeLoan from '../../Screens/AddEmployeeLoan/searchemployeeloan'
-
+import SearchByImployeeLoan from '../EmployeeRecord/index'
 class AddEmployeeLoan extends React.Component {
     constructor() {
         super()
@@ -75,6 +75,17 @@ class AddEmployeeLoan extends React.Component {
                         }
                     >
                         <SearchEmployeeLoan />
+                    </Tab>
+                    {/* //Search By Employee // */}
+
+                    <Tab
+                        heading={
+                            <TabHeading style={{ flexDirection: "column", backgroundColor: "white" }}>
+                                <Text style={{ color: activeColor === "searchemployee" ? "#003366" : "black" }}>Search By Employee loan</Text>
+                            </TabHeading>
+                        }
+                    >
+                        <SearchByImployeeLoan />
                     </Tab>
                 </Tabs>
 

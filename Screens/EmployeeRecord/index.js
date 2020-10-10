@@ -1,105 +1,324 @@
 import React, { Component } from 'react'
-import {
-    Image,
-    Dimensions, Keyboard,
-    StyleSheet,
-    Text,
-    SafeAreaView, Item, Icon, Button, Input, TextInput,
-    View, PanResponder,
-    TouchableOpacity,
-    ScrollView
-} from 'react-native'
-import FootersTabs from '../../component/footer'
-import Employee from '../../component/employee'
-import AppContainer from '../../component/AppContainer'
+import { Dimensions, StyleSheet, Text, View, TouchableOpacity, ScrollView, Picker, Items } from 'react-native'
 import { DatePicker } from 'native-base'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+// moment for time converting
+import moment from 'moment';
+// store
+import { connect } from "react-redux";
+import RNPrint from 'react-native-print';
 
 // const screenWidth = Dimensions.get('screen').width
 // const screenHeight = Dimensions.get('screen').height
-export default class EmployeeRecord extends React.Component {
+class EmployeeRecord extends React.Component {
     constructor() {
         super()
-        this.state = {}
+        this.state = {
+            selectedPrinter: null
+        }
+
+    }
+
+
+    UNSAFE_componentWillMount() {
+        const { employee, employeeLoan, inventoryList } = this.props
+        var name = []
+        if (employee && employee.length) {
+            employee.map((key, index) => {
+                name.push(key.name)
+            })
+        }
+        this.setState({
+            employee,
+            employeeLoan,
+            inventoryList,
+            employeeNameList: name
+        })
+    }
+
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        const { employee, employeeLoan, inventoryList } = this.props
+        var name = []
+        if (employee && employee.length) {
+            employee.map((key, index) => {
+                name.push(key.name)
+            })
+        }
+        this.setState({
+            employee,
+            employeeLoan,
+            inventoryList,
+            employeeNameList: name
+        })
+    }
+
+
+    setSelectedValue(itemValue, itemIndex) {
+        // console.log(itemValue, itemIndex, "itemValue")
+        this.setState({
+            sellectedItem: itemValue,
+            employeeNameIndex: itemIndex
+        })
+    }
+
+    search() {
+        // const { employee, employeeLoan } = this.props
+        const { employeeLoan, sellectedItem, inventoryList } = this.state
+
+        var employeeLoanData = []
+        var loanAmount = []
+        if (employeeLoan && employeeLoan.length) {
+            employeeLoan.map((key, index) => {
+                if (key.name == sellectedItem) {
+                    console.log(key, 'sellLOAN____sellectedItem')
+                    loanAmount.push(Number(key.amount))
+                    employeeLoanData.push(key)
+                    this.setState({ printDisplay: true, })
+                }
+                this.setState({ employeeLoanData, loanAmount, })
+            })
+        }
+        else {
+            this.setState({ employeeLoanData: [], loanAmount: [], })
+        }
+
+        var employeeLoanDetection = []
+        var loanDetectionAmount = []
+
+        if (inventoryList && inventoryList.length) {
+            inventoryList.map((key, index) => {
+                if (key.employeeName == sellectedItem) {
+                    if (key.loanDetection !== '' && key.loanDetection !== "0") {
+                        console.log(key, 'sellectedItem_____sellectedItem')
+                        loanDetectionAmount.push(Number(key.loanDetection))
+                        employeeLoanDetection.push(key)
+
+                    }
+                }
+                this.setState({ employeeLoanDetection, loanDetectionAmount, })
+                // else{
+                //     this.setState({ employeeLoanDetection : [], loanDetectionAmount : [], })
+                // }
+
+            })
+        }
+        else {
+            this.setState({ employeeLoanDetection: [], loanDetectionAmount: [], })
+        }
+
+    }
+
+    async printHTML() {
+        const { employeeLoan, sellectedItem, inventoryList, employeeLoanData, employeeLoanDetection, loanAmount,
+            loanDetectionAmount } = this.state
+        console.log(employeeLoanData[0].name, 'employeeLoanData___employeeLoanData')
+        await RNPrint.print({
+            html:
+
+                `
+                <div style="width: 200; font-size: 30px; padding-left: 20px; margin-bottom:10px"><b>${employeeLoanData[0].name}</b></div>
+                    <hr style="margin-bottom:20px"/>
+                <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
+                <div style="width: 300; font-size: 30px; "><b>Date</b></div>
+                <div style="width: 300; font-size: 30px; "><b>Loan</b></div>
+                <div style="width: 300; font-size: 30px; "><b>Minus Loan</b> </div>
+             </div>
+             ${employeeLoanData && employeeLoanData.length ? employeeLoanData.map((key, index) => {
+                    return (
+
+                        `<div style="display: flex;  flex-direction: row; padding-left: 20px  " >
+                        <div style="width: 300; font-size: 25px;">${moment(key.date, "x").format("YYYY-MM-DD")}</div>
+                        <div style="width: 300; font-size: 25px;">${key.amount}</div>
+                        <div style="width: 300; font-size: 25px;"></div>
+
+                      
+                    </div>`
+                    )
+                }) : null}
+            ${employeeLoanDetection && employeeLoanDetection.length ? employeeLoanDetection.map((key, index) => {
+                    return (
+
+                        `<div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
+                        <div style="width: 300; font-size: 25px;">${moment(key.dateAndTime, "x").format("YYYY-MM-DD")}</div>
+                        <div style="width: 300; font-size: 25px;"></div>
+                        <div style="width: 300; font-size: 25px;">${key.loanDetection}</div>
+                    </div>`
+                    )
+                }) : null}
+                <hr />
+                <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
+                <div style="width: 200; font-size: 25px;"><b>Total Remaning:  </b></div>
+                <div style="width: 300; font-size: 25px;">${loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</div>
+            </div>
+            `
+        })
     }
 
     render() {
         var { height, width } = Dimensions.get('window');
+        const { employeeNameList, sellectedItem, employeeLoanData, printDisplay, employeeLoanDetection, loanAmount, loanDetectionAmount } = this.state
         return (
             <View style={{ flex: 1 }}>
-                <AppContainer pageName={'Search Employee Loan'} navigation={this.props.navigation}  >
-                    <View style={{ flex: 1 }} >
-                        <ScrollView style={{ flex: 1 }}>
-                            <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
-                                <View style={styles.mainView}>
+                {/* <AppContainer pageName={'Search Employee Loan'} navigation={this.props.navigation}  > */}
+                <View style={{ flex: 1 }} >
+                    <View style={{ height: height * 0.777, justifyContent: "center", alignItems: "center" }}>
+                        <View style={styles.mainView}>
 
-                                    <View style={styles.addExpenseForm}>
+                            <View style={styles.addExpenseForm}>
 
-                                        <View style={styles.searchByView}>
-                                            <View style={[styles.dateFrom, { flex: 2, marginRight: "10%", }]}>
-                                                <Text style={styles.dateFromText}>Select Employee Name</Text>
-                                            </View>
-                                            <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#003366', padding: "2%", flex: 0.5 }}>
-                                                <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff', fontSize: 16 }}>Search</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                <View style={styles.searchByView}>
+                                    <View style={[styles.dateTime, { flex: 1.5, }]}>
 
-                                        <Text style={styles.productNameText}>Record</Text>
-                                        <Text style={styles.searchDateText}>Employee Name     ABC</Text>
+                                        <Picker mode="dropdown" selectedValue={sellectedItem}
+                                            style={{
+                                                fontWeight: "bold",
+                                                color: "grey",
+                                                width: "100%"
+                                            }}
+                                            onValueChange={(itemValue, itemIndex) => this.setSelectedValue(itemValue, itemIndex)}
+                                        >
+                                            <Items style={{ fontSize: 12, fontWeight: "bold" }} label={"Employee list"} value={""} />
 
-                                        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
-                                            <View style={{ flex: 3 }}>
-                                                <Text style={styles.text}>Date</Text>
-                                            </View>
-                                            <View style={{ flex: 1 }}>
-                                                <Text style={styles.text}>Add</Text>
+                                            {
+                                                employeeNameList.map((key, index) => {
+                                                    return (
+                                                        <Items style={{ fontSize: 12, fontWeight: "bold" }} label={key} value={key} key={index} />
+                                                    )
+                                                })
+                                            }
+                                        </Picker>
+                                    </View>
+                                    <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#003366', padding: "2%", flex: 0.5 }} onPress={() => { this.search() }}>
+                                        <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff', fontSize: 16 }}>Search</Text>
+                                    </TouchableOpacity>
+                                </View>
 
-                                            </View>
-                                            <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                                                <Text style={styles.text}>Minus</Text>
+                                {/* <Text style={styles.productNameText}>Record</Text> */}
+                                {/* <Text style={styles.searchDateText}>Employee Name     ABC</Text> */}
 
-                                            </View>
-                                        </View>
+                                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
 
-                                        <View style={{ display: 'flex', flexDirection: 'row', borderBottomWidth: 0.5, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10, }}>
-                                            <View style={{ flex: 3 }}>
-                                                <Text style={styles.text}>31-07-2020</Text>
-                                            </View>
-                                            <View style={{ flex: 1 }}>
-                                                <Text style={styles.text}>100</Text>
 
-                                            </View>
-                                            <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                                                <Text style={styles.text}>-10</Text>
+                                    <View style={{ flex: 3 }}>
+                                        <Text style={styles.text}>Date</Text>
+                                    </View>
+                                    <View style={{ flex: 1 }}>
+                                        <Text style={styles.text}>Loan</Text>
 
-                                            </View>
-                                        </View>
-
-                                        <View style={{ alignItems: 'flex-end', marginTop: 20 }}>
-                                            <View style={{ display: 'flex', flexDirection: 'row', }}>
-
-                                                <Text style={[styles.text, { paddingHorizontal: 50 }]}>Total Remaning</Text>
-                                                <Text style={[styles.text, { paddingHorizontal: 10 }]}>90</Text>
-
-                                            </View>
-                                            <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green', marginTop: 50 }}>
-                                                <Text style={{ textAlign: 'center', padding: 10, paddingHorizontal: 20, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                    </View>
+                                    <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                        <Text style={styles.text}>Minus Loan</Text>
 
                                     </View>
 
-
                                 </View>
+                                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.contentContainer}>
+
+                                    {/* <View style={{ display: 'flex', flexDirection: 'row', borderBottomWidth: 0.5, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10, }}> */}
+                                    {
+                                        employeeLoanData && employeeLoanData.length ?
+                                            employeeLoanData.map((key, index) => {
+                                                return (
+                                                    <View style={{ display: 'flex', flexDirection: 'row', borderBottomWidth: 0.5, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10, }}>
+                                                        <View style={{ flex: 3 }}>
+                                                            <Text style={styles.text}>{moment(key.date, "x").format("YYYY-MM-DD")}</Text>
+                                                        </View>
+                                                        <View style={{ flex: 1 }}>
+                                                            <Text style={styles.text}>{key.amount}</Text>
+
+                                                        </View>
+                                                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                                            {/* <Text style={styles.text}>-10</Text> */}
+
+                                                        </View>
+
+                                                    </View>
+                                                )
+                                            })
+                                            : null
+                                    }
+
+                                    {
+                                        employeeLoanDetection && employeeLoanDetection.length ?
+                                            employeeLoanDetection.map((key, index) => {
+                                                return (
+                                                    <View style={{ display: 'flex', flexDirection: 'row', borderBottomWidth: 0.5, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10, }}>
+                                                        <View style={{ flex: 3 }}>
+                                                            <Text style={styles.text}>{moment(key.dateAndTime, "x").format("YYYY-MM-DD")}</Text>
+                                                        </View>
+                                                        <View style={{ flex: 1 }}>
+                                                            {/* <Text style={styles.text}>{key.amount}</Text> */}
+
+                                                        </View>
+                                                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                                                            <Text style={styles.text}>{key.loanDetection}</Text>
+
+                                                        </View>
+
+                                                    </View>
+                                                )
+                                            })
+                                            : null
+                                    }
+                                    {/* </View> */}
+
+                                </ScrollView>
+                                {
+                                    printDisplay ?
+
+                                        <View style={{ alignItems: 'flex-end', marginBottom: -60 }}>
+                                            <View style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
+
+                                                <Text style={[styles.text, { paddingHorizontal: 50 }]}>Total Remaning</Text>
+                                                <Text style={[styles.text, { paddingHorizontal: 10 }]}>{loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</Text>
+
+                                            </View>
+                                            <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
+                                                <Text style={{ textAlign: 'center', padding: 10, paddingHorizontal: 20, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        : null
+                                }
+
                             </View>
-                        </ScrollView>
+
+
+                        </View>
                     </View>
-                </AppContainer>
+                </View>
+                {/* </AppContainer> */}
             </View>
         )
     }
 }
 
+
+let mapStateToProps = state => {
+    return {
+        employee: state.root.employee,
+        save: state.root.save,
+        employeeLoan: state.root.employeeLoan,
+        inventoryList: state.root.inventoryList
+
+    };
+};
+function mapDispatchToProps(dispatch) {
+    return ({
+    })
+}
+export default connect(mapStateToProps, mapDispatchToProps)(EmployeeRecord);
+
 const styles = StyleSheet.create({
+    dateTime: {
+        flex: 1,
+        // height: 50,
+        // padding: "2%"
+        marginRight: '2%',
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: 'grey',
+        // backgroundColor: "red"
+    },
     searchByView: {
         display: 'flex',
         flexDirection: 'row',
@@ -119,12 +338,12 @@ const styles = StyleSheet.create({
     },
     mainView: {
         width: "100%",
-        height: '94.5%',
+        height: '100%',
         // justifyContent: 'center',
         alignItems: 'center',
     },
     addExpenseForm: {
-        height: "75%",
+        height: "70%",
         display: 'flex',
         width: '90%',
         // justifyContent: 'center',

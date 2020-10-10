@@ -116,7 +116,7 @@ class SearchEmployeeLoan extends React.Component {
                                                         </View>
 
                                                         <View style={{ width: '8%', margin: "1%" }}>
-                                                            <TouchableOpacity
+                                                            {/* <TouchableOpacity
                                                                 style={{
                                                                     height: 35,
                                                                     borderRadius: 5,
@@ -127,11 +127,11 @@ class SearchEmployeeLoan extends React.Component {
                                                                 }}
                                                             >
                                                                 <AntDesign name="edit" style={{ color: 'green', fontWeight: 'bold', fontSize: 28, }} />
-                                                            </TouchableOpacity>
+                                                            </TouchableOpacity> */}
                                                         </View>
 
                                                         <View style={{ width: '8%', margin: "1%" }}>
-                                                            <TouchableOpacity
+                                                            {/* <TouchableOpacity
                                                                 style={{
                                                                     height: 35,
                                                                     borderRadius: 5,
@@ -141,7 +141,7 @@ class SearchEmployeeLoan extends React.Component {
                                                                 }}
                                                             >
                                                                 <AntDesign name="delete" style={{ color: 'white', fontWeight: 'bold', fontSize: 25, }} />
-                                                            </TouchableOpacity>
+                                                            </TouchableOpacity> */}
                                                         </View>
                                                     </View>
 

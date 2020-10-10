@@ -63,7 +63,8 @@ class EmployeeRecord extends React.Component {
 
     search() {
         // const { employee, employeeLoan } = this.props
-        const { employeeLoan, sellectedItem, inventoryList } = this.state
+        const { sellectedItem, inventoryList } = this.state
+        const { employeeLoan, } = this.props
 
         var employeeLoanData = []
         var loanAmount = []

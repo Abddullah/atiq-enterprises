@@ -85,7 +85,7 @@ class AddEmployeeLoan extends React.Component {
                     <Tab
                         heading={
                             <TabHeading style={{ flexDirection: "column", backgroundColor: "white" }}>
-                                <Text style={{ color: activeColor === "searchByemployeeLoan" ? "#003366" : "black" }}>Search By Employee loan</Text>
+                                <Text style={{ color: activeColor === "searchByemployeeLoan" ? "#003366" : "black" }}>Search By Employee Name</Text>
                             </TabHeading>
                         }
                     >

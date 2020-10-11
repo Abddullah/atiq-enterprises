@@ -29,7 +29,8 @@ class AddInventory extends React.Component {
             selectedEmployee: "",
             inventoryItemsQty: ["1"],
             inventoryList: [],
-            selectedPrinter: null
+            selectedPrinter: null,
+            autosaveId: ''
         }
     }
 
@@ -164,14 +165,16 @@ class AddInventory extends React.Component {
     }
 
     setSelectedValue(itemValue, itemIndex) {
-        const { productsName } = this.state
+        console.log('ddddddddddddddddddddddddddddd')
+        const { productsName, autosaveId } = this.state
         var soortedData = productsName.filter(product => product.productName === itemValue);
         console.log(soortedData, "soortedData")
+
         this.setState({
             [`selectedProduct${itemIndex}`]: itemValue,
             [`rate${itemIndex}`]: soortedData[0].productBuyingRate,
             [`rateSaleRate${itemIndex}`]: soortedData[0].productSellingRate,
-        })
+        }, () => { this.autoUpdateInventory(autosaveId) })
     }
 
     addExtraField() {
@@ -222,6 +225,7 @@ class AddInventory extends React.Component {
     }
 
     calculateRateAmount(waight, index) {
+        const { autosaveId } = this.state
         let product = this.state[`selectedProduct${index}`]
         if (product) {
             let rate = this.state[`rate${index}`]
@@ -229,7 +233,9 @@ class AddInventory extends React.Component {
             this.setState({
                 [`weight${index}`]: waight,
                 [`amount${index}`]: amount,
-            })
+            }, () => { this.createProductObject(index), this.autoUpdateInventory(autosaveId, 'WEIGHT') })
+
+
         }
         else {
             Alert.alert("Please select product")
@@ -240,7 +246,7 @@ class AddInventory extends React.Component {
 
 
     createProductObject(index) {
-        let { selectedProducts, advanceDetection, loanDetection, dateAndTime } = this.state
+        let { selectedProducts, advanceDetection, loanDetection, dateAndTime, autosaveId } = this.state
         let totalAmount = 0
         let productName = this.state[`selectedProduct${index}`];
         let weight = this.state[`weight${index}`];
@@ -248,7 +254,7 @@ class AddInventory extends React.Component {
         let sale = this.state[`rateSaleRate${index}`]
         let amount = this.state[`amount${index}`];
         var dateMiliSecond = moment(dateAndTime).format("x");
-
+        // this.autoUpdateInventory(autosaveId)
         let productObj = {
             productName: productName,
             waight: weight,
@@ -293,38 +299,38 @@ class AddInventory extends React.Component {
     }
 
     advanceDetection(text) {
-        let { totalAmount, loanDetection } = this.state
+        let { totalAmount, loanDetection, autosaveId } = this.state
         if (loanDetection != 0) {
             let updatedAmount = totalAmount - loanDetection - Number(text)
             this.setState({
                 advanceDetection: text,
                 finalAmount: updatedAmount
-            })
+            }, () => { this.autoUpdateInventory(autosaveId) })
         }
         else {
             let updatedAmount = totalAmount = totalAmount - Number(text)
             this.setState({
                 advanceDetection: text,
                 finalAmount: updatedAmount
-            })
+            }, () => { this.autoUpdateInventory(autosaveId) })
         }
     }
 
     loanDetection(text) {
-        let { totalAmount, advanceDetection, } = this.state
+        let { totalAmount, advanceDetection, autosaveId } = this.state
         if (advanceDetection != 0) {
             let updatedAmount = totalAmount - advanceDetection - Number(text)
             this.setState({
                 loanDetection: text,
                 finalAmount: updatedAmount
-            })
+            }, () => { this.autoUpdateInventory(autosaveId) })
         }
         else {
             let updatedAmount = totalAmount - Number(text)
             this.setState({
                 loanDetection: text,
                 finalAmount: updatedAmount
-            })
+            }, () => { this.autoUpdateInventory(autosaveId) })
         }
     }
 
@@ -341,6 +347,9 @@ class AddInventory extends React.Component {
             inventoryList: soortedData,
         })
     }
+    // componentDidCatch(){
+    //     console.log('sddddsssssss')
+    // }
     updateInventory() {
         let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
@@ -349,12 +358,12 @@ class AddInventory extends React.Component {
         if (dateAndTime == '') {
             Alert.alert('', 'Please select date and time')
         }
-        else if (selectedEmployee == '') {
-            Alert.alert('', 'Please select employee name')
-        }
-        else if (selectedEmployee == '') {
-            Alert.alert('', 'Please select products name')
-        }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select employee name')
+        // }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select products name')
+        // }
         else {
 
             let cloneObject = {
@@ -399,12 +408,12 @@ class AddInventory extends React.Component {
         if (dateAndTime == '') {
             Alert.alert('', 'Please select date and time')
         }
-        else if (selectedEmployee == '') {
-            Alert.alert('', 'Please select employee name')
-        }
-        else if (selectedEmployee == '') {
-            Alert.alert('', 'Please select products name')
-        }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select employee name')
+        // }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select products name')
+        // }
         else {
 
             let cloneObject = {
@@ -486,8 +495,9 @@ class AddInventory extends React.Component {
                 [`amount${index}`]: element.amount,
             })
         }
-
+        // , () => { this.autoUpdateInventory(autosaveId) }
         this.setState({
+            autosaveId: '',
             selectedIndex: index,
             edit: true,
             localDbKey: key.localDbKey,
@@ -504,17 +514,124 @@ class AddInventory extends React.Component {
         })
 
     }
+    autoSaveInventory() {
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, } = this.state
+        var dateMiliSecond = moment(dateAndTime).format("x");
+        if (dateAndTime == '') {
+            Alert.alert('', 'Please select date and time')
+        }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select employee name')
+        // }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select products name')
+        // }
+        else {
 
+            let cloneObject = {
+                dateAndTime: dateMiliSecond,
+                employeeName: selectedEmployee,
+                product: JSON.stringify(selectedProducts),
+                totalAmount: totalAmount,
+                advanceDetection: Number(advanceDetection),
+                loanDetection: Number(loanDetection),
+                finalAmount: finalAmount,
+                id: parseInt(Date.now() + dateAndTime)
+            }
+            this.props.saveInventorys(cloneObject)
+            this.setState({ autosaveId: cloneObject.id })
+            // this.setState({
+            //     dateAndTime: "",
+            //     employeeName: "",
+            //     inventoryListTime: "",
+            //     product: "",
+            //     totalAmount: 0,
+            //     advanceDetection: 0,
+            //     loanDetection: 0,
+            //     finalAmount: 0,
+            //     selectedEmployee: "",
+            //     inventoryItemsQty: ["1"],
+            //     selectedProducts: [],
+            //     todaytotalAmount: '',
+            //     [`selectedProduct${0}`]: '',
+            //     [`weight${0}`]: '',
+            //     [`rate${0}`]: '',
+            //     [`amount${0}`]: '',
+            // })
+        }
+    }
+
+    autoUpdateInventory(autosaveId, WEIGHT) {
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey } = this.state
+        var dateMiliSecond = moment(dateAndTime).format("x");
+        console.log(localDbKey, 'localDbKddey___localDbKey')
+
+        if (dateAndTime == '') {
+            Alert.alert('', 'Please select date and time')
+        }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select employee name')
+        // }
+        // else if (selectedEmployee == '') {
+        //     Alert.alert('', 'Please select products name')
+        // }
+        else {
+
+            let cloneObject = {
+                dateAndTime: dateMiliSecond,
+                employeeName: selectedEmployee,
+                product: JSON.stringify(selectedProducts),
+                totalAmount: totalAmount,
+                advanceDetection: Number(advanceDetection),
+                loanDetection: Number(loanDetection),
+                finalAmount: finalAmount,
+                id: autosaveId
+            }
+            console.log(WEIGHT, cloneObject, 'cloneObject__cloneObject')
+
+            this.props.updateInventorys(autosaveId, cloneObject)
+            // this.setState({
+            //     selectedIndex: '',
+            //     inventoryList: [],
+            //     selectedProducts: [],
+            //     dateAndTime: "",
+            //     inventoryListTime: "",
+            //     employeeName: "",
+            //     product: "",
+            //     totalAmount: 0,
+            //     advanceDetection: 0,
+            //     loanDetection: 0,
+            //     finalAmount: 0,
+            //     selectedEmployee: "",
+            //     inventoryItemsQty: ["1"],
+            //     todaytotalAmount: '',
+            //     edit: false,
+            //     [`selectedProduct${0}`]: '',
+            //     [`weight${0}`]: '',
+            //     [`rate${0}`]: '',
+            //     [`amount${0}`]: '',
+            // })
+        }
+    }
 
 
     render() {
         const { employeeNameList, productsName, dateAndTime,
             selectedEmployee, inventoryItemsQty, totalAmount,
             finalAmount, inventoryListTime, selectedProducts,
-            todaytotalAmount, inventoryList, edit, loader, selectedIndex, updatedProduct
+            todaytotalAmount, inventoryList, edit, loader, selectedIndex, updatedProduct, autosaveId
         } = this.state
         console.log(this.state.productsName, "updatedProduct__Render_console")
+        if (dateAndTime && selectedEmployee && autosaveId == '') {
+            // if (autosaveId) {
 
+            //     console.log(autosaveId, "UPDATE____Inventory")
+            // }
+            // else {
+            this.autoSaveInventory()
+            console.log(autosaveId, "SAVE____Inventory")
+            // }
+        }
         return (
             <AppContainer pageName={'Add Inventory'} navigation={this.props.navigation} >
                 <View style={{

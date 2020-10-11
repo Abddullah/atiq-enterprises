@@ -273,7 +273,7 @@ class EmployeeRecord extends React.Component {
                                                 <Text style={[styles.text, { paddingHorizontal: 10 }]}>{loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</Text>
 
                                             </View>
-                                            <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
+                                            <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: '#003366', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
                                                 <Text style={{ textAlign: 'center', padding: 10, paddingHorizontal: 20, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
                                             </TouchableOpacity>
                                         </View>

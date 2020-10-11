@@ -144,49 +144,76 @@ class Report extends React.Component {
     }
 
     async printHTML() {
-        const { employeeLoan, sellectedItem, inventoryList, employeeLoanData, employeeLoanDetection, loanAmount,
-            loanDetectionAmount } = this.state
-        console.log(employeeLoanData[0].name, 'employeeLoanData___employeeLoanData')
+        const { soortedProductList, expenceItem, expenceAmount } = this.state
+        var profitAmount = []
+        console.log(expenceItem, 'soortedProductList___soortedProductList')
         await RNPrint.print({
             html:
 
                 `
-                <div style="width: 200; font-size: 30px; padding-left: 20px; margin-bottom:10px"><b>${employeeLoanData[0].name}</b></div>
+                <div style="width: 200; font-size: 30px; padding-left: 20px; margin-bottom:10px"><b>Product: ${soortedProductList[0].productName}</b></div>
                     <hr style="margin-bottom:20px"/>
                 <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
-                <div style="width: 300; font-size: 30px; "><b>Date</b></div>
-                <div style="width: 300; font-size: 30px; "><b>Loan</b></div>
-                <div style="width: 300; font-size: 30px; "><b>Minus Loan</b> </div>
+                <div style="width: 250; font-size: 26px; "><b>Date</b></div>
+                <div style="width: 250; font-size: 26px; "><b>Buying Amount</b></div>
+                <div style="width: 250; font-size: 26px; "><b>Selling Amount</b> </div>
+                <div style="width: 250; font-size: 26px; "><b>Profit</b> </div>
+
              </div>
-             ${employeeLoanData && employeeLoanData.length ? employeeLoanData.map((key, index) => {
+             ${soortedProductList && soortedProductList.length ? soortedProductList.map((key, index) => {
+                var totalSaleRate = key.waight * key.saleRate
+                var profit = totalSaleRate - key.amount
+                profitAmount.push(profit)
                     return (
-
                         `<div style="display: flex;  flex-direction: row; padding-left: 20px  " >
-                        <div style="width: 300; font-size: 25px;">${moment(key.date, "x").format("YYYY-MM-DD")}</div>
-                        <div style="width: 300; font-size: 25px;">${key.amount}</div>
-                        <div style="width: 300; font-size: 25px;"></div>
-
-                      
+                        <div style="width: 200; font-size: 25px;">${moment(key.dateAndTime, "x").format("YYYY-MM-DD")}</div>
+                        <div style="width: 200; font-size: 25px;">${key.amount}</div>
+                        <div style="width: 200; font-size: 25px;">${totalSaleRate}</div>
+                        <div style="width: 200; font-size: 25px;">${profit}</div>
                     </div>`
                     )
-                }) : null}
-            ${employeeLoanDetection && employeeLoanDetection.length ? employeeLoanDetection.map((key, index) => {
-                    return (
+                }) : ''}
+                <hr style="margin-bottom:10px"/>
+                <br /> <br />
+            <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
+            <div style="width: 350; font-size: 26px; "><b>Date</b></div>
+            <div style="width: 350; font-size: 26px; "><b>Expense</b></div>
+            <div style="width: 350; font-size: 26px; "><b>Amount</b> </div>
 
+         </div>
+                ${expenceItem && expenceItem.length ? expenceItem.map((key, index) => {
+                    return (
+        
                         `<div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
                         <div style="width: 300; font-size: 25px;">${moment(key.dateAndTime, "x").format("YYYY-MM-DD")}</div>
-                        <div style="width: 300; font-size: 25px;"></div>
-                        <div style="width: 300; font-size: 25px;">${key.loanDetection}</div>
+                        <div style="width: 300; font-size: 25px;">${key.expense}</div>
+                        <div style="width: 300; font-size: 25px;">${key.amount}</div>
                     </div>`
                     )
                 }) : null}
                 <hr />
-                <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
-                <div style="width: 200; font-size: 25px;"><b>Total Remaning:  </b></div>
-                <div style="width: 300; font-size: 25px;">${loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</div>
+                <br /> <br />
             </div>
+
+            
+            <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
+            <div style="width: 350; font-size: 26px; "><b>Profit Amount</b></div>
+            <div style="width: 350; font-size: 26px; "><b>Expense Amount</b></div>
+            <div style="width: 350; font-size: 26px; "><b>Total Profit</b> </div>
+
+         </div>
+         <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-bottom: 20px " >
+            <div style="width: 350; font-size: 26px; ">${profitAmount.reduce((a, b) => a + b, 0)}</div>
+            <div style="width: 350; font-size: 26px; ">${expenceAmount.reduce((a, b) => a + b,)}</div>
+            <div style="width: 350; font-size: 26px; ">${profitAmount.reduce((a, b) => a + b, 0) - expenceAmount.reduce((a, b) => a + b, 0)} </div>
+
+         </div>
             `
         })
+   
+        // <div style="display: flex;  flex-direction: row; padding-left: 20px; margin-top:20px  " >
+        // <div style="width: 200; font-size: 25px;"><b>Total Remaning:  </b></div>
+        // <div style="width: 300; font-size: 25px;">${loanAmount && loanDetectionAmount ? loanAmount.reduce((a, b) => a + b, 0) - loanDetectionAmount.reduce((a, b) => a + b, 0) : null}</div>
     }
 
 
@@ -468,8 +495,8 @@ class Report extends React.Component {
                                                     <View style={{ width: '28%', marginBottom: 5, }}>
                                                         <Text style={{ fontWeight: "bold" }}>Total Profit</Text>
                                                     </View>
-                                                    <View style={{ width: '13%', marginBottom: -15, }}>
-                                                        <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: 'green', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
+                                                    <View style={{ width: '13%', marginBottom: -18, }}>
+                                                        <TouchableOpacity activeOpacity={0.7} style={{ borderRadius: 3, backgroundColor: '#003366', marginBottom: 0 }} onPress={() => { this.printHTML() }}>
                                                             <Text style={{ textAlign: 'center', padding: 10, paddingHorizontal: 20, fontSize: 17, letterSpacing: 1, color: '#fff', fontWeight: '700' }}>PRINT</Text>
                                                         </TouchableOpacity>
 
@@ -484,16 +511,16 @@ class Report extends React.Component {
                                                     borderColor: "grey",
                                                     // backgroundColor: "red"
                                                 }}>
-                                                    <View style={{ width: '25%', }}>
+                                                    <View style={{ width: '28%', }}>
                                                         <Text style={[styles.text, { paddingVertical: 5 }]}>{profitAmount.reduce((a, b) => a + b, 0)}</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', }}>
+                                                    <View style={{ width: '28%', }}>
                                                         <Text style={[styles.text, { paddingVertical: 5 }]}>{expense}</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', }}>
+                                                    <View style={{ width: '28%', }}>
                                                         <Text style={[styles.text, { paddingVertical: 5 }]}>{profitAmount.reduce((a, b) => a + b, 0) - expense}</Text>
                                                     </View>
-                                                    <View style={{ width: '25%', }}>
+                                                    <View style={{ width: '13%', }}>
                                                         {/* <Text style={[styles.text, { paddingVertical: 5 }]}>{'key.amount'}</Text> */}
                                                     </View>
                                                 </View>

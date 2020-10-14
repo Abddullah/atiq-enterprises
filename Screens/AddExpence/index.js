@@ -49,6 +49,7 @@ class AddExpense extends Component {
 
     UNSAFE_componentWillReceiveProps(nextProps) {
         let { expenseList } = nextProps
+        // alert('Products_List_will_receive_props')
         console.log(expenseList, "Products_List_will_receive_props")
         let expenseNames = []
         for (let index = 0; index < expenseList.length; index++) {

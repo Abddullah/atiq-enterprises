@@ -30,7 +30,8 @@ class AddInventory extends React.Component {
             inventoryItemsQty: ["1"],
             inventoryList: [],
             selectedPrinter: null,
-            autosaveId: ''
+            autosaveId: '',
+            updateButton: false
         }
     }
 
@@ -376,7 +377,7 @@ class AddInventory extends React.Component {
                 finalAmount: finalAmount,
                 id: localDbKey
             }
-
+            console.log(cloneObject, 'clollllllneObject')
             this.props.updateInventorys(localDbKey, cloneObject)
             this.setState({
                 selectedIndex: '',
@@ -398,6 +399,7 @@ class AddInventory extends React.Component {
                 [`weight${0}`]: '',
                 [`rate${0}`]: '',
                 [`amount${0}`]: '',
+                updateButton: false
             })
         }
     }
@@ -471,6 +473,7 @@ class AddInventory extends React.Component {
             [`weight${0}`]: '',
             [`rate${0}`]: '',
             [`amount${0}`]: '',
+            updateButton: false
         })
     }
 
@@ -497,6 +500,7 @@ class AddInventory extends React.Component {
         }
         // , () => { this.autoUpdateInventory(autosaveId) }
         this.setState({
+            updateButton: true,
             autosaveId: '',
             selectedIndex: index,
             edit: true,
@@ -517,6 +521,8 @@ class AddInventory extends React.Component {
     autoSaveInventory() {
         let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
+        console.log('autoSAVEInventory____________')
+
         if (dateAndTime == '') {
             Alert.alert('', 'Please select date and time')
         }
@@ -562,34 +568,38 @@ class AddInventory extends React.Component {
     }
 
     autoUpdateInventory(autosaveId, WEIGHT) {
-        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey } = this.state
+        let { dateAndTime, selectedEmployee, selectedProducts, totalAmount, advanceDetection, loanDetection, finalAmount, localDbKey, updateButton } = this.state
         var dateMiliSecond = moment(dateAndTime).format("x");
-        console.log(localDbKey, 'localDbKddey___localDbKey')
 
-        if (dateAndTime == '') {
-            Alert.alert('', 'Please select date and time')
-        }
-        // else if (selectedEmployee == '') {
-        //     Alert.alert('', 'Please select employee name')
-        // }
-        // else if (selectedEmployee == '') {
-        //     Alert.alert('', 'Please select products name')
-        // }
-        else {
+        if (!updateButton) {
 
-            let cloneObject = {
-                dateAndTime: dateMiliSecond,
-                employeeName: selectedEmployee,
-                product: JSON.stringify(selectedProducts),
-                totalAmount: totalAmount,
-                advanceDetection: Number(advanceDetection),
-                loanDetection: Number(loanDetection),
-                finalAmount: finalAmount,
-                id: autosaveId
+            console.log(autosaveId, 'autoUpdateInventory____________')
+
+            if (dateAndTime == '') {
+                Alert.alert('', 'Please select date and time')
             }
-            console.log(WEIGHT, cloneObject, 'cloneObject__cloneObject')
+            // else if (selectedEmployee == '') {
+            //     Alert.alert('', 'Please select employee name')
+            // }
+            // else if (selectedEmployee == '') {
+            //     Alert.alert('', 'Please select products name')
+            // }
+            else {
 
-            this.props.updateInventorys(autosaveId, cloneObject)
+                let cloneObject = {
+                    dateAndTime: dateMiliSecond,
+                    employeeName: selectedEmployee,
+                    product: JSON.stringify(selectedProducts),
+                    totalAmount: totalAmount,
+                    advanceDetection: Number(advanceDetection),
+                    loanDetection: Number(loanDetection),
+                    finalAmount: finalAmount,
+                    id: autosaveId
+                }
+                console.log(WEIGHT, cloneObject, 'cloneObject__cloneObject')
+
+                this.props.updateInventorys(autosaveId, cloneObject)
+            }
             // this.setState({
             //     selectedIndex: '',
             //     inventoryList: [],
@@ -619,10 +629,11 @@ class AddInventory extends React.Component {
         const { employeeNameList, productsName, dateAndTime,
             selectedEmployee, inventoryItemsQty, totalAmount,
             finalAmount, inventoryListTime, selectedProducts,
-            todaytotalAmount, inventoryList, edit, loader, selectedIndex, updatedProduct, autosaveId
+            todaytotalAmount, inventoryList, edit, loader, selectedIndex, updateButton, updatedProduct, autosaveId
         } = this.state
-        console.log(this.state.productsName, "updatedProduct__Render_console")
-        if (dateAndTime && selectedEmployee && autosaveId == '') {
+
+        console.log(updateButton, "todaytotalAmount__Render_console")
+        if (dateAndTime && selectedEmployee && autosaveId == '' && !updateButton) {
             // if (autosaveId) {
 
             //     console.log(autosaveId, "UPDATE____Inventory")
@@ -891,83 +902,95 @@ class AddInventory extends React.Component {
                                             {
                                                 loader ?
                                                     <ActivityIndicator size="small" color="#003366" /> :
-
-                                                    <TouchableOpacity style={{
-                                                        width: "30%",
-                                                        height: 50,
-                                                        borderRadius: 5,
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        marginTop: 5,
-                                                        backgroundColor: '#003366',
-                                                    }}
-                                                        onPress={() => { edit ? this.updateInventory() : this.saveInventory() }}
-                                                    >
-                                                        <Text style={{
-                                                            fontSize: 14,
-                                                            fontWeight: "bold",
+                                                    edit ?
+                                                        <TouchableOpacity style={{
+                                                            width: "30%",
+                                                            height: 50,
+                                                            borderRadius: 5,
                                                             alignItems: "center",
                                                             justifyContent: "center",
-                                                            color: "white"
-                                                        }}>
-                                                            {
-                                                                edit ? 'Update' : 'Save'
-                                                            }
-                                                        </Text>
+                                                            marginTop: 5,
+                                                            backgroundColor: '#003366',
+                                                        }}
+                                                            // this.saveInventory()
+                                                            onPress={() => { edit ? this.updateInventory() : null }}
+                                                        >
+                                                            <Text style={{
+                                                                fontSize: 14,
+                                                                fontWeight: "bold",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                color: "white"
+                                                            }}>
+                                                                {
+                                                                    edit ? 'Update' : null
+                                                                }
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                        : null
+                                            }
+                                            {
+                                                edit ?
+
+
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            width: "30%",
+                                                            height: 50,
+                                                            borderRadius: 5,
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            marginTop: 5,
+                                                            backgroundColor: '#003366',
+                                                            marginLeft: "2%"
+                                                        }}
+                                                        onPress={() => { this.deleteInventory() }}
+                                                    >
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 14,
+                                                                fontWeight: "bold",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                color: "white"
+                                                            }}
+                                                        >
+                                                            Delete
+                                                </Text>
                                                     </TouchableOpacity>
+                                                    : null
                                             }
 
-                                            <TouchableOpacity
-                                                style={{
-                                                    width: "30%",
-                                                    height: 50,
-                                                    borderRadius: 5,
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    marginTop: 5,
-                                                    backgroundColor: '#003366',
-                                                    marginLeft: "2%"
-                                                }}
-                                                onPress={() => { this.deleteInventory() }}
-                                            >
-                                                <Text
-                                                    style={{
-                                                        fontSize: 14,
-                                                        fontWeight: "bold",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        color: "white"
-                                                    }}
-                                                >
-                                                    Delete
+                                            {
+                                                edit ?
+                                                    <TouchableOpacity
+                                                        style={{
+                                                            width: "30%",
+                                                            height: 50,
+                                                            borderRadius: 5,
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                            marginTop: 5,
+                                                            backgroundColor: '#003366',
+                                                            marginLeft: "2%"
+                                                        }}
+                                                        onPress={() => { this.printHTML() }}
+                                                    >
+                                                        <Text
+                                                            style={{
+                                                                fontSize: 14,
+                                                                fontWeight: "bold",
+                                                                alignItems: "center",
+                                                                justifyContent: "center",
+                                                                color: "white"
+                                                            }}
+                                                        >
+                                                            Print
                                                 </Text>
-                                            </TouchableOpacity>
+                                                    </TouchableOpacity>
+                                                    : null
+                                            }
 
-                                            <TouchableOpacity
-                                                style={{
-                                                    width: "30%",
-                                                    height: 50,
-                                                    borderRadius: 5,
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    marginTop: 5,
-                                                    backgroundColor: '#003366',
-                                                    marginLeft: "2%"
-                                                }}
-                                                onPress={() => { this.printHTML() }}
-                                            >
-                                                <Text
-                                                    style={{
-                                                        fontSize: 14,
-                                                        fontWeight: "bold",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        color: "white"
-                                                    }}
-                                                >
-                                                    Print
-                                                </Text>
-                                            </TouchableOpacity>
                                         </View>
                                     </View>
                                     <View style={{ width: "40%", justifyContent: "center", }}>

@@ -2,7 +2,7 @@ import { Alert } from 'react-native';
 import axios from 'axios';
 import NetInfo from "@react-native-community/netinfo";
 
-// let baseUrl = "http://192.168.10.14:3002"
+// let baseUrl = "http://192.168.10.4:3002"
 let baseUrl = "https://atiq-enterprises.herokuapp.com"
 
 // local DB and schema
@@ -64,7 +64,7 @@ export function getEmployee(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('localDbEmployeeKeyForSaveMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(localDbkey, 'Getting_Employee_Key_data_from_local_DB___')
+                        console.log(localDbkey, 'Getting_Employee_Key_data_from_local_DB___SAVE_KEY_Employee')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -107,7 +107,7 @@ export function getEmployee(navigation) {
                                                             realm.delete(employee_localDbKey);
 
                                                             let myJSONss = JSON.parse(JSON.stringify(employee_localDbKey))
-                                                            console.log(myJSONss, 'employee_localDbKey')
+
                                                             //  GET AND SAVE TO STORE
                                                             var options = {
                                                                 method: 'GET',
@@ -149,23 +149,24 @@ export function getEmployee(navigation) {
                             })
                         }
                         else {
-                            //  GET AND SAVE TO STORE
-                            var options = {
-                                method: 'GET',
-                                url: baseUrl + "/addEmployee/getEmployee",
-                            }
-                            axios(options)
-                                .then(result => {
-                                    console.log(result.data, 'result___result')
-                                    if (result.data && result.data.length) {
-                                        dispatch({ type: "ADD_EMPLOYEE", payload: result.data })
-                                    }
-                                })
-                                .catch(err => {
-                                    let error = JSON.parse(JSON.stringify(err))
-                                    console.log(error, err, 'Error_get_employee_from_MongoDb')
-                                    alert(error.message + error.config.url)
-                                })
+                        //  GET AND SAVE TO STORE
+                        var options = {
+                            method: 'GET',
+                            url: baseUrl + "/addEmployee/getEmployee",
+                        }
+                        axios(options)
+                            .then(result => {
+                                console.log(result.data, 'result___result')
+                                if (result.data && result.data.length) {
+                                    dispatch({ type: "ADD_EMPLOYEE", payload: result.data })
+                                }
+                            })
+                            .catch(err => {
+                                let error = JSON.parse(JSON.stringify(err))
+                                console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                alert(error.message + error.config.url)
+
+                            })
                         }
 
                     })
@@ -191,7 +192,7 @@ export function updateEmployeeSplash(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('localDbEmployeeKeyForUpdateMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(localDbkey, 'Getting_Eddddddddmployee_Key_data_from_local_DB___')
+                        console.log(localDbkey, 'Getting_UPDATE_Employee_Key_data_from_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -338,7 +339,7 @@ export function getEmployeeLoan(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('AddEmployeeLoan')
                         let myJSON = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(myJSON, 'Getting_Employee_Loan_data_from_local_DB')
+                        console.log(myJSON, 'Getting_Employee_Loan_data_from_local_DB_SAVE_KEY')
                         dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
                         // setTimeout(() => {
                         //     navigation.navigate("App")
@@ -493,7 +494,7 @@ export function updateEmployeeLoanSplash(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('localDbEmployeeLoanKeyForUpdateMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(localDbkey, 'Getting_Eddddddddmployee_Key_data_from_local_DB___')
+                        console.log(localDbkey, 'Getting_Update_Employee_Key_data_from_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -578,7 +579,7 @@ export function deleteEmployeeLoanSplash(navigation) {
                     .then(realm => {
                         const getDeleteEmployeeKey = realm.objects('localDbEmployeeLoanKeyForDeleteMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(getDeleteEmployeeKey))
-                        console.log(localDbkey, 'getDeleteEmployeeKey_local_DB___')
+                        console.log(localDbkey, 'getDeleteEmployeeLoanKey_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -588,7 +589,7 @@ export function deleteEmployeeLoanSplash(navigation) {
                                     localDbKey: key.id,
                                 }
                                 var options = {
-                                    method: 'DELETE',
+                                    method: 'POST',
                                     url: baseUrl + "/employeeLoan/deleteEmployeeLoan",
                                     headers:
                                     {
@@ -663,7 +664,7 @@ export function getProducts(navigation) {
                     .then(realm => {
                         const getProductKey = realm.objects('localDbAddProductKeyForSaveMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(getProductKey))
-                        console.log(localDbkey, 'Getting_Product_key_from_local_DB')
+                        console.log(localDbkey, 'Getting_Product_Save_key_from_local_DB')
 
                         if (localDbkey && localDbkey.length) {
                             let delete_localDb_key = []
@@ -785,7 +786,7 @@ export function updateProductSplash(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('localDbProductKeyForUpdateMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(localDbkey, 'Getting_Eddddddddmployee_Key_data_from_local_DB___')
+                        console.log(localDbkey, 'Getting_Product_Update_Key_data_from_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -869,7 +870,7 @@ export function deleteProductSplash(navigation) {
                     .then(realm => {
                         const getDeleteEmployeeKey = realm.objects('localDbAddProductKeyForDeleteMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(getDeleteEmployeeKey))
-                        console.log(localDbkey, 'getDeleteEmployeeKey_local_DB___')
+                        console.log(localDbkey, 'Getting_Product_Detele_Key_data_from_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -950,7 +951,7 @@ export function getExpense(navigation) {
                     .then(realm => {
                         const getProductKey = realm.objects('localDbExpenseKeyForSaveMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(getProductKey))
-                        console.log(localDbkey, 'Getting_Product_key_fddddrom_local_DB')
+                        console.log(localDbkey, 'Getting_Expense_SAVE_Key_key__local_DB')
 
                         if (localDbkey && localDbkey.length) {
                             localDbkey.map((key, index) => {
@@ -1072,7 +1073,7 @@ export function updateExpenseSplash(navigation) {
                     .then(realm => {
                         const addExpenseData = realm.objects('localDbExpenseKeyForUpdateMongoDb')
                         let localDbkey = JSON.parse(JSON.stringify(addExpenseData))
-                        console.log(localDbkey, 'Getting_Expenseeee_sssKey_data_from_local_DB___')
+                        console.log(localDbkey, 'Getting_Expense_Update_Key_data_from_local_DB___')
                         navigation.navigate("App")
 
                         if (localDbkey && localDbkey.length) {
@@ -1223,6 +1224,7 @@ export function getInventory(navigation) {
                         //     navigation.navigate("App")
                         // }, 5000)
                         navigation.navigate("App")
+
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Getting_Inventory_data_from_local_DB');
@@ -1324,7 +1326,7 @@ export function getInventory(navigation) {
                             }
                             axios(options)
                                 .then(result => {
-                                    console.log(result.data, 'result___Inventory_GET')
+                                    console.log(result.data, 'resulsst___Inventory_GET')
                                     if (result.data && result.data.length) {
                                         dispatch({ type: "ADD_INVENTORY", payload: result.data })
                                     }
@@ -1514,13 +1516,13 @@ export function addEmployee(newEmployee) {
                 Realm.open({ schema: [AddEmployeeSchema] })
                     .then(realm => {
                         realm.write(() => {
-                            realm.create('AddEmployee', {
-                                localDbKey: newEmployee.id,
-                                name: newEmployee.name,
-                                phone: newEmployee.phone,
-                                address: newEmployee.address,
-                                cnic: newEmployee.cnic,
-                            });
+                            // realm.create('AddEmployee', {
+                            //     localDbKey: newEmployee.id,
+                            //     name: newEmployee.name,
+                            //     phone: newEmployee.phone,
+                            //     address: newEmployee.address,
+                            //     cnic: newEmployee.cnic,
+                            // });
                             const employee = realm.objects('AddEmployee')
                             let myJSON = JSON.parse(JSON.stringify(employee))
                             console.log(myJSON, 'After_Add_Employee')
@@ -1533,22 +1535,22 @@ export function addEmployee(newEmployee) {
                         alert(error)
                     });
                 // save key to local db
-                Realm.open({ schema: [localDbEmployeeKeyForSaveMongoDbSchema] })
-                    .then(realm => {
-                        realm.write(() => {
-                            realm.create('localDbEmployeeKeyForSaveMongoDb', {
-                                id: newEmployee.id,
-                            });
-                            const localDbEmployeeKeyForSaveMongoDb = realm.objects('localDbEmployeeKeyForSaveMongoDb')
-                            let myJSON = JSON.parse(JSON.stringify(localDbEmployeeKeyForSaveMongoDb))
-                            console.log(myJSON, 'After_Add_localDBbKeyEmployee')
-                        });
-                        realm.close();
-                    })
-                    .catch(function (error) {
-                        console.log(error, 'Error_AddEmployee_key_to-local_DB');
-                        alert(error)
-                    });
+                // Realm.open({ schema: [localDbEmployeeKeyForSaveMongoDbSchema] })
+                //     .then(realm => {
+                //         realm.write(() => {
+                //             realm.create('localDbEmployeeKeyForSaveMongoDb', {
+                //                 id: newEmployee.id,
+                //             });
+                //             const localDbEmployeeKeyForSaveMongoDb = realm.objects('localDbEmployeeKeyForSaveMongoDb')
+                //             let myJSON = JSON.parse(JSON.stringify(localDbEmployeeKeyForSaveMongoDb))
+                //             console.log(myJSON, 'After_Add_localDBbKeyEmployee')
+                //         });
+                //         realm.close();
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error, 'Error_AddEmployee_key_to-local_DB');
+                //         alert(error)
+                //     });
 
             }
             else {
@@ -1584,10 +1586,26 @@ export function addEmployee(newEmployee) {
                                         address: newEmployee.address,
                                         cnic: newEmployee.cnic,
                                     });
-                                    const employee = realm.objects('AddEmployee')
-                                    let myJSON = JSON.parse(JSON.stringify(employee))
-                                    console.log(myJSON, 'After_Add_Employee')
-                                    dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    // const employee = realm.objects('AddEmployee')
+                                    // let myJSON = JSON.parse(JSON.stringify(employee))
+                                    // console.log(myJSON, 'After_Add_Employee')
+                                    // dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addEmployee/getEmployee",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE____SAVE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                            alert(error.message + error.config.url)
+                                        })
                                 });
                                 realm.close();
                             })
@@ -1669,10 +1687,26 @@ export function deleteEmployee(key) {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('AddEmployee', Number(key));
                                     realm.delete(deleteById);
-                                    const deletedEmployee = realm.objects('AddEmployee')
-                                    let myJSON = JSON.parse(JSON.stringify(deletedEmployee))
-                                    console.log(myJSON, 'DeletedEmployee')
-                                    dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    // const deletedEmployee = realm.objects('AddEmployee')
+                                    // let myJSON = JSON.parse(JSON.stringify(deletedEmployee))
+                                    // console.log(myJSON, 'DeletedEmployee')
+                                    // dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addEmployee/getEmployee",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE____DETELE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                            alert(error.message + error.config.url)
+                                        })
                                 })
                                 realm.close();
                             })
@@ -1757,10 +1791,26 @@ export function updateEmployee(key, updateData) {
                             .then(realm => {
                                 realm.write(() => {
                                     realm.create('AddEmployee', { localDbKey: Number(key), name: updateData.name, phone: updateData.phone, address: updateData.address, cnic: updateData.cnic }, 'modified')
-                                    const updatedEmployee = realm.objects('AddEmployee')
-                                    let myJSON = JSON.parse(JSON.stringify(updatedEmployee))
-                                    console.log(myJSON, 'up')
-                                    dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    // const updatedEmployee = realm.objects('AddEmployee')
+                                    // let myJSON = JSON.parse(JSON.stringify(updatedEmployee))
+                                    // console.log(myJSON, 'up')
+                                    // dispatch({ type: "ADD_EMPLOYEE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addEmployee/getEmployee",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE____UPDATE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_get_employee_from_MongoDb')
+                                            alert(error.message + error.config.url)
+                                        })
                                 })
                                 realm.close();
                             })
@@ -1859,10 +1909,27 @@ export function addEmployeeLoan(newEmployeeloan) {
                                         date: newEmployeeloan.date,
                                         cnic: newEmployeeloan.cnic,
                                     });
-                                    const employee = realm.objects('AddEmployeeLoan')
-                                    let myJSON = JSON.parse(JSON.stringify(employee))
-                                    console.log(myJSON, 'After_Add_Employee_loan')
-                                    dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    // const employee = realm.objects('AddEmployeeLoan')
+                                    // let myJSON = JSON.parse(JSON.stringify(employee))
+                                    // console.log(myJSON, 'After_Add_Employee_loan')
+                                    // dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/employeeLoan/getEmployeeLoan",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE_LOAN______SAVE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 });
                                 realm.close();
                             })
@@ -1960,10 +2027,27 @@ export function deleteEmployeeLoan(key) {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('AddEmployeeLoan', Number(key));
                                     realm.delete(deleteById);
-                                    const deletedEmployee = realm.objects('AddEmployeeLoan')
-                                    let myJSON = JSON.parse(JSON.stringify(deletedEmployee))
-                                    console.log(myJSON, 'After_delete_employee')
-                                    dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    // const deletedEmployee = realm.objects('AddEmployeeLoan')
+                                    // let myJSON = JSON.parse(JSON.stringify(deletedEmployee))
+                                    // console.log(myJSON, 'After_delete_employee')
+                                    // dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/employeeLoan/getEmployeeLoan",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE_LOAN______DELETE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2049,10 +2133,27 @@ export function updateEmployeeLoan(key, updateData) {
                             .then(realm => {
                                 realm.write(() => {
                                     realm.create('AddEmployeeLoan', { localDbKey: Number(key), name: updateData.name, amount: updateData.amount, cnic: updateData.cnic }, 'modified')
-                                    const updatedEmployee = realm.objects('AddEmployeeLoan')
-                                    let myJSON = JSON.parse(JSON.stringify(updatedEmployee))
-                                    console.log(myJSON, 'After_updatedEmployeeLoan')
-                                    dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    // const updatedEmployee = realm.objects('AddEmployeeLoan')
+                                    // let myJSON = JSON.parse(JSON.stringify(updatedEmployee))
+                                    // console.log(myJSON, 'After_updatedEmployeeLoan')
+                                    // dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/employeeLoan/getEmployeeLoan",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            if (result.data && result.data.length) {
+                                                console.log(result.data, 'ADD_EMPLOYEE_LOAN______UPDATE_AND_GET')
+                                                dispatch({ type: "ADD_EMPLOYEE_LOAN", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2153,10 +2254,27 @@ export function addProduct(productData) {
                                         productSellingRate: productData.productSellingRate,
                                         productBuyingRate: productData.productBuyingRate,
                                     });
-                                    const product = realm.objects('AddProduct')
-                                    let myJSON = JSON.parse(JSON.stringify(product))
-                                    console.log(myJSON, 'After_Add_Product')
-                                    dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    // const product = realm.objects('AddProduct')
+                                    // let myJSON = JSON.parse(JSON.stringify(product))
+                                    // console.log(myJSON, 'After_Add_Product')
+                                    // dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addProduct/getProduct",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___result')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_PRODUCT", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 });
                                 realm.close();
                             })
@@ -2239,10 +2357,27 @@ export function deleteProduct(key) {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('AddProduct', Number(key));
                                     realm.delete(deleteById);
-                                    const deletedProduct = realm.objects('AddProduct')
-                                    let myJSON = JSON.parse(JSON.stringify(deletedProduct))
-                                    console.log(myJSON, 'Delete_Product')
-                                    dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    // const deletedProduct = realm.objects('AddProduct')
+                                    // let myJSON = JSON.parse(JSON.stringify(deletedProduct))
+                                    // console.log(myJSON, 'Delete_Product')
+                                    // dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addProduct/getProduct",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___result')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_PRODUCT", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2339,10 +2474,27 @@ export function updateProduct(key, updateData) {
                                         productBuyingRate: updateData.productBuyingRate,
                                         productSellingRate: updateData.productSellingRate
                                     }, 'modified')
-                                    const updatedProduct = realm.objects('AddProduct')
-                                    let myJSON = JSON.parse(JSON.stringify(updatedProduct))
-                                    console.log(myJSON, 'After_Updated_Product')
-                                    dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    // const updatedProduct = realm.objects('AddProduct')
+                                    // let myJSON = JSON.parse(JSON.stringify(updatedProduct))
+                                    // console.log(myJSON, 'After_Updated_Product')
+                                    // dispatch({ type: "ADD_PRODUCT", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addProduct/getProduct",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___result')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_PRODUCT", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2377,13 +2529,23 @@ export function addExpense(getData) {
                                 dateAndTime: getData.dateAndTime,
                                 expense: getData.expense,
                                 amount: getData.amount,
-
                             });
                             const expense = realm.objects('AddExpense')
                             let myJSON = JSON.parse(JSON.stringify(expense))
                             console.log(myJSON, 'After_Add_Expense')
-                            // dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                            dispatch({ type: "ADD_EXPENSE", payload: myJSON })
                         });
+
+                        // realm.write(() => {
+                        //     const deleteById = realm.objectForPrimaryKey('AddExpense', Number(key));
+                        //     realm.delete(deleteById);
+                        //     const deletedData = realm.objects('AddExpense')
+                        //     let myJSON = JSON.parse(JSON.stringify(deletedData))
+                        //     console.log(myJSON, 'After_Delete_Expense')
+                        //     dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                        // })
+
+
                         realm.close();
                     })
                     .catch(function (error) {
@@ -2441,10 +2603,27 @@ export function addExpense(getData) {
                                         amount: getData.amount,
 
                                     });
-                                    const expense = realm.objects('AddExpense')
-                                    let myJSON = JSON.parse(JSON.stringify(expense))
-                                    console.log(myJSON, 'After_Add_Expense')
-                                    dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    // const expense = realm.objects('AddExpense')
+                                    // let myJSON = JSON.parse(JSON.stringify(expense))
+                                    // console.log(myJSON, 'After_Add_Expense')
+                                    // dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addExpense/getExpense",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_EXPENSE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 });
                                 realm.close();
                             })
@@ -2526,10 +2705,27 @@ export function deleteExpense(key) {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('AddExpense', Number(key));
                                     realm.delete(deleteById);
-                                    const deletedData = realm.objects('AddExpense')
-                                    let myJSON = JSON.parse(JSON.stringify(deletedData))
-                                    console.log(myJSON, 'After_Delete_Expense')
-                                    dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    // const deletedData = realm.objects('AddExpense')
+                                    // let myJSON = JSON.parse(JSON.stringify(deletedData))
+                                    // console.log(myJSON, 'After_Delete_Expense')
+                                    // dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addExpense/getExpense",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_EXPENSE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2623,10 +2819,27 @@ export function updateExpense(key, updateData) {
                                         expense: updateData.expense,
                                         amount: updateData.amount,
                                     }, 'modified')
-                                    const updatedData = realm.objects('AddExpense')
-                                    let myJSON = JSON.parse(JSON.stringify(updatedData))
-                                    console.log(myJSON, 'After_Updated_Expense')
-                                    dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    // const updatedData = realm.objects('AddExpense')
+                                    // let myJSON = JSON.parse(JSON.stringify(updatedData))
+                                    // console.log(myJSON, 'After_Updated_Expense')
+                                    // dispatch({ type: "ADD_EXPENSE", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addExpense/getExpense",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_EXPENSE", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2685,19 +2898,19 @@ export function saveInventorys(getData) {
                                 totalAmount: getData.totalAmount,
                                 advanceDetection: getData.advanceDetection,
                                 loanDetection: getData.loanDetection,
-                                finalAmount: getData.finalAmount,
+                                finalAmount: Number(getData.finalAmount),
                             });
                             const inventory = realm.objects('inventory')
                             let myJSON = JSON.parse(JSON.stringify(inventory))
                             console.log(myJSON, 'After_Add_Inventory')
-                            // dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                            dispatch({ type: "ADD_INVENTORY", payload: myJSON })
 
                         });
                         realm.close();
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Add_Inventory_to_local_DB');
-                        alert(error)
+                        // alert(error)
                     });
 
                 // save key to local db
@@ -2716,7 +2929,7 @@ export function saveInventorys(getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Inventory_key_Save_to-local_DB');
-                        alert(error)
+                        // alert(error)
                     });
             }
             else {
@@ -2756,12 +2969,29 @@ export function saveInventorys(getData) {
                                         totalAmount: getData.totalAmount,
                                         advanceDetection: getData.advanceDetection,
                                         loanDetection: getData.loanDetection,
-                                        finalAmount: getData.finalAmount,
+                                        finalAmount: Number(getData.finalAmount),
                                     });
-                                    const inventory = realm.objects('inventory')
-                                    let myJSON = JSON.parse(JSON.stringify(inventory))
-                                    console.log(myJSON, 'After_Add_Inventory')
-                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    // const inventory = realm.objects('inventory')
+                                    // let myJSON = JSON.parse(JSON.stringify(inventory))
+                                    // console.log(myJSON, 'After_Add_Inventory')
+                                    // dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addInventory/getInventory",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'resultsssssssss___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_INVENTORY", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 });
                                 realm.close();
                             })
@@ -2801,7 +3031,7 @@ export function deleteInventory(key) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Delete_Inventory_From_local_DB');
-                        alert(error)
+                        // alert(error)
                     });
 
                 // save key to local db
@@ -2846,10 +3076,27 @@ export function deleteInventory(key) {
                                 realm.write(() => {
                                     const deleteById = realm.objectForPrimaryKey('inventory', Number(key));
                                     realm.delete(deleteById);
-                                    const deletedData = realm.objects('inventory')
-                                    let myJSON = JSON.parse(JSON.stringify(deletedData))
-                                    console.log(myJSON, 'After_Delete_Inventory')
-                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    // const deletedData = realm.objects('inventory')
+                                    // let myJSON = JSON.parse(JSON.stringify(deletedData))
+                                    // console.log(myJSON, 'After_Delete_Inventory')
+                                    // dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addInventory/getInventory",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_INVENTORY", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
@@ -2896,7 +3143,7 @@ export function updateInventorys(key, getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_Update_Expense_to_local_DB');
-                        alert(error)
+                        // alert(error)
                     });
 
                 // save key to local db
@@ -2914,7 +3161,7 @@ export function updateInventorys(key, getData) {
                     })
                     .catch(function (error) {
                         console.log(error, 'Error_update_Inventory_Key_to_local_DB');
-                        alert(error)
+                        // alert(error)
                     });
 
             }
@@ -2960,7 +3207,24 @@ export function updateInventorys(key, getData) {
                                     const updatedData = realm.objects('inventory')
                                     let myJSON = JSON.parse(JSON.stringify(updatedData))
                                     console.log(myJSON, 'After_Updated_Inventory')
-                                    dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    // dispatch({ type: "ADD_INVENTORY", payload: myJSON })
+                                    var options = {
+                                        method: 'GET',
+                                        url: baseUrl + "/addInventory/getInventory",
+                                    }
+                                    axios(options)
+                                        .then(result => {
+                                            console.log(result.data, 'result___EXPENSE_GET')
+                                            if (result.data && result.data.length) {
+                                                dispatch({ type: "ADD_INVENTORY", payload: result.data })
+                                            }
+                                        })
+                                        .catch(err => {
+                                            let error = JSON.parse(JSON.stringify(err))
+                                            console.log(error, err, 'Error_result___result')
+                                            //                                     alert(error.message + error.config.url)
+
+                                        })
                                 })
                                 realm.close();
                             })
